@@ -29,8 +29,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private double centerBreakX;
     private double yBreak = 640.0f;
 
-    private int breakWidth     = 130;
-    private int breakHeight    = 30;
+    private int breakWidth     = 1300;//130 is original width
+    private int breakHeight    = 30;//original height : 30
     private int halfBreakWidth = breakWidth / 2;
 
     private int sceneWidth = 500;
@@ -117,6 +117,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             newGame.setTranslateX(220);
             newGame.setTranslateY(340);
 
+
         }
 
 
@@ -127,7 +128,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         heartLabel = new Label("Heart : " + heart);
         heartLabel.setTranslateX(sceneWidth - 70);
         if (loadFromSave == false) {
-            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel, newGame);
+            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel, newGame,load);
         } else {
             root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel);
         }
