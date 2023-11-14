@@ -80,30 +80,55 @@ public class Block implements Serializable {
     }
 
 
-    public int checkHitToBlock(double xBall, double yBall) {
-
+    // Update the return type of the method to return the collision type
+// Update the return type of the method to return the collision type
+    public int checkHitToBlock(double xBall, double yBall, double ballRadius) {
         if (isDestroyed) {
             return NO_HIT;
         }
 
-        if (xBall >= x && xBall <= x + width && yBall == y + height) {
-            return HIT_BOTTOM;
-        }
+        double blockTop = y;
+        double blockBottom = y + height;
+        double blockLeft = x;
+        double blockRight = x + width;
 
-        if (xBall >= x && xBall <= x + width && yBall == y) {
-            return HIT_TOP;
-        }
+        // Check if the ball intersects with the block
+        if (xBall + ballRadius >= blockLeft && xBall - ballRadius <= blockRight &&
+                yBall + ballRadius >= blockTop && yBall - ballRadius <= blockBottom) {
 
-        if (yBall >= y && yBall <= y + height && xBall == x + width) {
-            return HIT_RIGHT;
-        }
+            // Check collisions at multiple points along the ball's path
+            boolean hitTop = yBall - ballRadius <= blockTop && yBall + ballRadius > blockTop;
+            boolean hitBottom = yBall + ballRadius >= blockBottom && yBall - ballRadius < blockBottom;
+            boolean hitLeft = xBall - ballRadius <= blockLeft && xBall + ballRadius > blockLeft;
+            boolean hitRight = xBall + ballRadius >= blockRight && xBall - ballRadius < blockRight;
 
-        if (yBall >= y && yBall <= y + height && xBall == x) {
-            return HIT_LEFT;
+            if (hitTop && !hitBottom && !hitLeft && !hitRight) {
+                return HIT_TOP;
+            } else if (hitBottom && !hitTop && !hitLeft && !hitRight) {
+                return HIT_BOTTOM;
+            } else if (hitLeft && !hitTop && !hitBottom && !hitRight) {
+                return HIT_LEFT;
+            } else if (hitRight && !hitTop && !hitBottom && !hitLeft) {
+                return HIT_RIGHT;
+            }
+
+            // Continuous collision detection to handle fast ball movement
+            if (hitTop && (yBall - ballRadius) < blockTop) {
+                return HIT_TOP;
+            } else if (hitBottom && (yBall + ballRadius) > blockBottom) {
+                return HIT_BOTTOM;
+            } else if (hitLeft && (xBall - ballRadius) < blockLeft) {
+                return HIT_LEFT;
+            } else if (hitRight && (xBall + ballRadius) > blockRight) {
+                return HIT_RIGHT;
+            }
         }
 
         return NO_HIT;
     }
+
+
+
 
     public static int getPaddingTop() {
         return block.paddingTop;
