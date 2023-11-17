@@ -10,6 +10,10 @@ import java.io.Serializable;
 
 public class Block implements Serializable {
     private static Block block = new Block(-1, -1, Color.TRANSPARENT, 99);
+    public static int HIT_TOP_LEFT = 4;
+    public static int HIT_TOP_RIGHT = 5;
+    public static int HIT_BOTTOM_LEFT = 6;
+    public static int HIT_BOTTOM_RIGHT = 7;
 
     public int row;
     public int column;
@@ -80,55 +84,37 @@ public class Block implements Serializable {
     }
 
 
-    // Update the return type of the method to return the collision type
-// Update the return type of the method to return the collision type
-    public int checkHitToBlock(double xBall, double yBall, double ballRadius) {
+    public double checkHitToBlock(double xBall, double yBall, double ballRadius) {
+
         if (isDestroyed) {
             return NO_HIT;
         }
 
-        double blockTop = y;
-        double blockBottom = y + height;
-        double blockLeft = x;
-        double blockRight = x + width;
+        double ballLeftEdge = xBall - ballRadius;
+        double ballRightEdge = xBall + ballRadius;
+        double ballTopEdge = yBall - ballRadius;
+        double ballBottomEdge = yBall + ballRadius;
 
-        // Check if the ball intersects with the block
-        if (xBall + ballRadius >= blockLeft && xBall - ballRadius <= blockRight &&
-                yBall + ballRadius >= blockTop && yBall - ballRadius <= blockBottom) {
+        boolean collideTop = ballBottomEdge >= y && ballTopEdge < y;
+        boolean collideBottom = ballTopEdge <= y + height && ballBottomEdge > y + height;
+        boolean collideLeft = ballRightEdge >= x && ballLeftEdge < x;
+        boolean collideRight = ballLeftEdge <= x + width && ballRightEdge > x + width;
 
-            // Check collisions at multiple points along the ball's path
-            boolean hitTop = yBall - ballRadius <= blockTop && yBall + ballRadius > blockTop;
-            boolean hitBottom = yBall + ballRadius >= blockBottom && yBall - ballRadius < blockBottom;
-            boolean hitLeft = xBall - ballRadius <= blockLeft && xBall + ballRadius > blockLeft;
-            boolean hitRight = xBall + ballRadius >= blockRight && xBall - ballRadius < blockRight;
-
-            if (hitTop && !hitBottom && !hitLeft && !hitRight) {
-                return HIT_TOP;
-            } else if (hitBottom && !hitTop && !hitLeft && !hitRight) {
-                return HIT_BOTTOM;
-            } else if (hitLeft && !hitTop && !hitBottom && !hitRight) {
-                return HIT_LEFT;
-            } else if (hitRight && !hitTop && !hitBottom && !hitLeft) {
-                return HIT_RIGHT;
-            }
-
-            // Continuous collision detection to handle fast ball movement
-            if (hitTop && (yBall - ballRadius) < blockTop) {
-                return HIT_TOP;
-            } else if (hitBottom && (yBall + ballRadius) > blockBottom) {
-                return HIT_BOTTOM;
-            } else if (hitLeft && (xBall - ballRadius) < blockLeft) {
-                return HIT_LEFT;
-            } else if (hitRight && (xBall + ballRadius) > blockRight) {
-                return HIT_RIGHT;
-            }
+        if (collideTop && xBall >= x && xBall <= x + width) {
+            return HIT_TOP;
+        } else if (collideBottom && xBall >= x && xBall <= x + width) {
+            return HIT_BOTTOM;
+        } else if (collideLeft && yBall >= y && yBall <= y + height) {
+            return HIT_LEFT;
+        } else if (collideRight && yBall >= y && yBall <= y + height) {
+            return HIT_RIGHT;
         }
 
         return NO_HIT;
     }
-
-
-
+    private double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
 
     public static int getPaddingTop() {
         return block.paddingTop;
