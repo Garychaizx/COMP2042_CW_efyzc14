@@ -280,6 +280,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         ball = new Circle();
         ball.setRadius(ballRadius);
         ball.setFill(new ImagePattern(new Image("ball.png")));
+        xBall = xBreak + (breakWidth / 2);
+        yBall = yBreak - ballRadius - 40;
     }
 
     private void initBreak() {
@@ -654,7 +656,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
             for (final Block block : blocks) {
-                double hitCode = block.checkHitToBlock(xBall, yBall,ballRadius);
+                double hitCode = block.checkHitToBlock(xBall, yBall, ballRadius);
                 if (hitCode != Block.NO_HIT) {
                     score += 1;
 
@@ -718,9 +720,18 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         setPhysicsToBall();
 
 
+        // Check if the gold ball status is active and update the background
+        if (isGoldStauts) {
+            ball.setFill(new ImagePattern(new Image("goldball.png")));
+            root.getStyleClass().add("goldRoot");
+            root.setStyle("-fx-background-image: none;");
+        }
+
         if (time - goldTime > 5000) {
+            // Reset to normal ball and background after the gold ball duration
             ball.setFill(new ImagePattern(new Image("ball.png")));
             root.getStyleClass().remove("goldRoot");
+            root.setStyle("-fx-background-image: url('bg.jpg');");
             isGoldStauts = false;
         }
 
