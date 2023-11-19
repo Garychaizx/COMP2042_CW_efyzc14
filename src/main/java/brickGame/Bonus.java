@@ -9,11 +9,14 @@ import java.util.Random;
 
 public class Bonus implements Serializable {
     public Rectangle choco;
+    public Rectangle snow;
 
     public double x;
     public double y;
     public long timeCreated;
     public boolean taken = false;
+    public boolean isGoldBlock;
+    public boolean isSnowBlock;
 
     public Bonus(int row, int column) {
         x = (column * (Block.getWidth())) + Block.getPaddingH() + (Block.getWidth() / 2) - 15;
@@ -28,7 +31,14 @@ public class Bonus implements Serializable {
         choco.setHeight(30);
         choco.setX(x);
         choco.setY(y);
+        snow = new Rectangle();
+        snow.setWidth(30);
+        snow.setHeight(30);
+        snow.setX(x);
+        snow.setY(y);
 
+        String rrl;
+        rrl = "penalty.png";
         String url;
         if (new Random().nextInt(20) % 2 == 0) {
             url = "bonus1.png";
@@ -37,6 +47,7 @@ public class Bonus implements Serializable {
         }
 
         choco.setFill(new ImagePattern(new Image(url)));
+        snow.setFill(new ImagePattern(new Image(rrl)));
     }
 
 

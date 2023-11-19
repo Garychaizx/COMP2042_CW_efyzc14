@@ -32,6 +32,8 @@ public class LoadSave {
     public long             goldTime;
     public double           vX;
     public ArrayList<BlockSerializable> blocks = new ArrayList<BlockSerializable>();
+//    public long snowTime;
+//    public boolean isSnowStauts;
 
 
     public void read() {
@@ -54,11 +56,13 @@ public class LoadSave {
             centerBreakX = inputStream.readDouble();
             time = inputStream.readLong();
             goldTime = inputStream.readLong();
+//            snowTime = inputStream.readLong();
             vX = inputStream.readDouble();
 
 
             isExistHeartBlock = inputStream.readBoolean();
             isGoldStauts = inputStream.readBoolean();
+//            isSnowStauts = inputStream.readBoolean();
             goDownBall = inputStream.readBoolean();
             goRightBall = inputStream.readBoolean();
             colideToBreak = inputStream.readBoolean();

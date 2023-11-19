@@ -14,10 +14,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 
 public class Main extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
@@ -44,6 +48,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private double yBall;
 
     private boolean isGoldStauts      = false;
+//    private boolean isSnowStauts      = false;
+
     private boolean isExistHeartBlock = false;
 
     private Rectangle rect;
@@ -58,6 +64,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private long time     = 0;
     private long hitTime  = 0;
     private long goldTime = 0;
+//    private long snowTime = 0;
 
     private GameEngine engine;
     public static String savePath    = "C:/save/save.mdds";
@@ -65,6 +72,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
+    private ArrayList<Bonus> snows = new ArrayList<Bonus>();
     private Color[]          colors = new Color[]{
             Color.MAGENTA,
             Color.RED,
@@ -86,6 +94,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private Label            levelLabel;
 
     private boolean loadFromSave = false;
+    private boolean isPaused = false;
+    private boolean isGameRunning = false;
 
     Stage  primaryStage;
     Button load    = null;
@@ -94,7 +104,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-
 
         if (loadFromSave == false) {
             level++;
@@ -137,6 +146,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         Scene scene = new Scene(root, sceneWidth, sceneHeigt);
         scene.getStylesheets().add("style.css");
         scene.setOnKeyPressed(this);
+
 
         primaryStage.setTitle("Game");
         primaryStage.setScene(scene);
@@ -204,6 +214,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     }
                 } else if (r % 10 == 3) {
                     type = Block.BLOCK_STAR;
+                } else if (r % 10 == 4) {
+                    type = Block.BLOCK_SNOW;
                 } else {
                     type = Block.BLOCK_NORMAL;
                 }
@@ -234,8 +246,68 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             case S:
                 saveGame();
                 break;
+            case SPACE:
+                togglePause();
+                break;
+            case ESCAPE:
+                showQuitConfirmation();
+                break;
         }
     }
+    private void showQuitConfirmation() {
+        engine.stop();
+        isGameRunning = false;
+        new Score().showMessage("Game Paused", Main.this);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Quit Game");
+        alert.setHeaderText("Are you sure you want to quit?");
+        alert.setContentText("Any unsaved progress will be lost.");
+
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No");
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == yesButton) {
+            // User clicked Yes, close the game
+            Platform.exit();
+        }
+        if (result.isPresent() && result.get() == noButton) {
+            engine = new GameEngine();
+            engine.setOnAction(this);
+            engine.setFps(120);
+            engine.start();
+            isGameRunning = true;
+            new Score().showMessage("Game Continue", Main.this);
+        }
+    }
+
+    private void togglePause() {
+        isPaused = !isPaused;
+
+        if (isPaused) {
+            // Game is paused, stop the game engine
+            engine.stop();
+            isGameRunning = false;
+            new Score().showMessage("Game Paused", Main.this);
+        } else {
+            // Game is resumed, start or resume the game engine
+            if (!isGameRunning) {
+                engine = new GameEngine();
+                engine.setOnAction(this);
+                engine.setFps(120);
+                engine.start();
+                isGameRunning = true;
+                new Score().showMessage("Game Continue", Main.this);
+            }
+        }
+    }
+
+
 
     float oldXBreak;
 
@@ -477,11 +549,13 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     outputStream.writeDouble(centerBreakX);
                     outputStream.writeLong(time);
                     outputStream.writeLong(goldTime);
+//                    outputStream.writeLong(snowTime);
                     outputStream.writeDouble(vX);
 
 
                     outputStream.writeBoolean(isExistHeartBlock);
                     outputStream.writeBoolean(isGoldStauts);
+//                    outputStream.writeBoolean(isSnowStauts);
                     outputStream.writeBoolean(goDownBall);
                     outputStream.writeBoolean(goRightBall);
                     outputStream.writeBoolean(colideToBreak);
@@ -531,6 +605,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         isExistHeartBlock = loadSave.isExistHeartBlock;
         isGoldStauts = loadSave.isGoldStauts;
+//        isSnowStauts = loadSave.isSnowStauts;
         goDownBall = loadSave.goDownBall;
         goRightBall = loadSave.goRightBall;
         colideToBreak = loadSave.colideToBreak;
@@ -552,10 +627,12 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         centerBreakX = loadSave.centerBreakX;
         time = loadSave.time;
         goldTime = loadSave.goldTime;
+//        snowTime = loadSave.snowTime;
         vX = loadSave.vX;
 
         blocks.clear();
         chocos.clear();
+        snows.clear();
 
         for (BlockSerializable ser : loadSave.blocks) {
             int r = new Random().nextInt(200);
@@ -569,6 +646,20 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Reset or initialize variables related to game state
+        nextLevelInProgress = false;
+        destroyedBlockCount = 0;
+
+        // Start or restart timelines
+        if (engine != null) {
+            engine.stop();
+        }
+        engine = new GameEngine();
+        engine.setOnAction(this);
+        engine.setFps(120);
+        engine.start();
+
     }
 
     private boolean nextLevelInProgress = false;
@@ -586,15 +677,18 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     goDownBall = true;
 
                     isGoldStauts = false;
+//                    isSnowStauts = false;
                     isExistHeartBlock = false;
 
                     hitTime = 0;
                     time = 0;
                     goldTime = 0;
+//                    snowTime=0;
 
                     engine.stop();
                     blocks.clear();
                     chocos.clear();
+                    snows.clear();
                     destroyedBlockCount = 0;
                     start(primaryStage);
 
@@ -618,13 +712,16 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             goDownBall = true;
 
             isGoldStauts = false;
+//            isSnowStauts = false;
             isExistHeartBlock = false;
             hitTime = 0;
             time = 0;
             goldTime = 0;
+//            snowTime=0;
 
             blocks.clear();
             chocos.clear();
+            snows.clear();
 
             start(primaryStage);
         } catch (Exception e) {
@@ -649,6 +746,9 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
                 for (Bonus choco : chocos) {
                     choco.choco.setY(choco.y);
+                }
+                for (Bonus snow : snows) {
+                    snow.snow.setY(snow.y);
                 }
             }
         });
@@ -687,6 +787,18 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                         root.getStyleClass().add("goldRoot");
                         isGoldStauts = true;
                     }
+                    if (block.type == Block.BLOCK_SNOW) {
+                        final Bonus snow = new Bonus(block.row, block.column);
+                        snow.timeCreated = time;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                root.getChildren().add(snow.snow);
+                            }
+                        });
+                        snows.add(snow);
+
+                    }
 
                     if (block.type == Block.BLOCK_HEART) {
                         heart++;
@@ -713,28 +825,51 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     public void onInit() {
 
     }
+    private boolean isSnowBonusActive = false;
+    private long snowBonusStartTime = 0;
+    private double targetSlowSpeed = 0.3; // Set your desired slow speed
+    private double slowdownFactor = 0.98; // Adjust the factor to control the slowdown rate
+    private final long SNOW_BONUS_DURATION = 10000; // Duration of snow bonus in milliseconds (10 seconds)
 
     @Override
     public void onPhysicsUpdate() {
         checkDestroyedCount();
         setPhysicsToBall();
-
+        if (isPaused) {
+            return; // Skip physics update if the game is paused
+        }
 
         // Check if the gold ball status is active and update the background
         if (isGoldStauts) {
-            ball.setFill(new ImagePattern(new Image("goldball.png")));
-            root.getStyleClass().add("goldRoot");
-            root.setStyle("-fx-background-image: none;");
+            if (time - goldTime <= 5000) {
+                ball.setFill(new ImagePattern(new Image("goldball.png")));
+                root.getStyleClass().add("goldRoot");
+                root.setStyle("-fx-background-image: none;");
+            } else {
+                // Reset to normal ball and background after the gold ball duration
+                ball.setFill(new ImagePattern(new Image("ball.png")));
+                root.getStyleClass().remove("goldRoot");
+                root.setStyle("-fx-background-image: url('bg.jpg');");
+                isGoldStauts = false;
+                goldTime = 0; // Reset goldTime
+            }
         }
-
-        if (time - goldTime > 5000) {
-            // Reset to normal ball and background after the gold ball duration
-            ball.setFill(new ImagePattern(new Image("ball.png")));
-            root.getStyleClass().remove("goldRoot");
-            root.setStyle("-fx-background-image: url('bg.jpg');");
-            isGoldStauts = false;
-        }
-
+//        else if (isSnowStauts) {
+//            ball.setFill(new ImagePattern(new Image("snowball.png")));
+//            root.getStyleClass().add("snowRoot");
+//            root.setStyle("-fx-background-image: none;");
+//
+//            if (time - snowTime > 5000) {
+//                // Reset to normal ball and background after the snowball duration
+//                ball.setFill(new ImagePattern(new Image("ball.png")));
+//                root.getStyleClass().remove("snowRoot");
+//                root.setStyle("-fx-background-image: url('bg.jpg');");
+//                isSnowStauts = false;
+//                snowTime = 0; // Reset snowTime
+//            }
+//        }
+//        root.getStyleClass().remove("snowRoot");
+        root.getStyleClass().remove("goldRoot");
 
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
@@ -746,16 +881,63 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 choco.choco.setVisible(false);
                 score += 3;
                 new Score().show(choco.x, choco.y, 3, this);
+
+                // Check if it's a gold block
+//                if (choco.isGoldBlock) {
+//                    isGoldStauts = true;
+//                    goldTime = time;
+//                    isSnowStauts = false; // Make sure to set snow status to false
+//                } else if (choco.isSnowBlock) {
+//                    isSnowStauts = true;
+//                    snowTime = time;
+//                    isGoldStauts = false; // Make sure to set gold status to false
+//                }
             }
             choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
         }
+        for (Bonus snow : snows) {
+            if (snow.y > sceneHeigt || snow.taken) {
+                continue;
+            }
+            if (snow.y >= yBreak && snow.y <= yBreak + breakHeight && snow.x >= xBreak && snow.x <= xBreak + breakWidth) {
+                System.out.println("You Got a Penalty!(Ball will slow down for 10 seconds)");
+                snow.taken = true;
+                snow.snow.setVisible(false);
+                activateSnowBonus(); // Activate snow bonus on collision
+            }
+            snow.y += ((time - snow.timeCreated) / 1000.000) + 1.000;
+        }
 
-        //System.out.println("time is:" + time + " goldTime is " + goldTime);
-
+        // Check for active snow bonus and update the ball speed
+        if (isSnowBonusActive) {
+            // Adjust the ball speed during the snow bonus
+            vX *= slowdownFactor;
+            vY *= slowdownFactor;
+            // Ensure the speed doesn't go below the targetSlowSpeed
+            vX = Math.max(vX, targetSlowSpeed);
+            vY = Math.max(vY, targetSlowSpeed);
+            ball.setFill(new ImagePattern(new Image("snowball.png")));
+            long elapsedTime = time - snowBonusStartTime;
+            if (elapsedTime >= SNOW_BONUS_DURATION) {
+                // Snow bonus duration expired, reset the ball speed
+                vX = 1.0; // Reset to the original speed
+                vY = 1.0;
+                isSnowBonusActive = false;
+                ball.setFill(new ImagePattern(new Image("ball.png")));
+            }
+        }
     }
+    private void activateSnowBonus() {
+        isSnowBonusActive = true;
+        snowBonusStartTime = time;
+    }
+
+
+
 
     @Override
     public void onTime(long time) {
         this.time = time;
     }
+
 }
