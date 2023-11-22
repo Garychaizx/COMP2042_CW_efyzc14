@@ -100,7 +100,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     Stage  primaryStage;
     Button load    = null;
     Button newGame = null;
-
+    private Ball playball;
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -349,11 +349,13 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         Random random = new Random();
         yBall = random.nextInt(sceneHeigt - 200) + ((level + 1) * Block.getHeight()) + 15;
         xBall = random.nextInt(sceneWidth) + 1;
+        xBall = xBreak + (breakWidth / 2);
+        yBall = yBreak - ballRadius - 40;
         ball = new Circle();
         ball.setRadius(ballRadius);
         ball.setFill(new ImagePattern(new Image("ball.png")));
-        xBall = xBreak + (breakWidth / 2);
-        yBall = yBreak - ballRadius - 40;
+        playball= new Ball(xBall,yBall,ballRadius);
+
     }
 
     private void initBreak() {
@@ -400,27 +402,17 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private void setPhysicsToBall() {
         //v = ((time - hitTime) / 1000.000) + 1.000;
 
-        if (goDownBall) {
-            yBall += vY;
-        } else {
-            yBall -= vY;
-        }
+        playball.updatePosition();
 
-        if (goRightBall) {
-            xBall += vX;
-        } else {
-            xBall -= vX;
-        }
-
-        if (yBall <= 0) {
+        if (playball.gety() <= 0) {
             //vX = 1.000;
             resetColideFlags();
-            goDownBall = true;
+            playball.godownball();
             return;
         }
-        if (yBall >= sceneHeigt) {
+        if (playball.gety() >= sceneHeigt) {
             resetColideFlags();
-            goDownBall = false;
+            playball.goupball();
             if (!isGoldStauts) {
                 //TODO gameover
                 heart--;
@@ -435,13 +427,13 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             //return;
         }
 
-        if (yBall >= yBreak - ballRadius) {
+        if (playball.gety() >= yBreak - ballRadius) {
             //System.out.println("Colide1");
-            if (xBall >= xBreak && xBall <= xBreak + breakWidth) {
+            if (playball.getx() >= xBreak && playball.getx() <= xBreak + breakWidth) {
                 hitTime = time;
                 resetColideFlags();
                 colideToBreak = true;
-                goDownBall = false;
+                playball.goupball();
 
                 double relation = (xBall - centerBreakX) / (breakWidth / 2);
 
@@ -456,7 +448,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     //System.out.println("vX " + vX);
                 }
 
-                if (xBall - centerBreakX > 0) {
+                if (playball.getx() - centerBreakX > 0) {
                     colideToBreakAndMoveToRight = true;
                 } else {
                     colideToBreakAndMoveToRight = false;
@@ -465,13 +457,13 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
 
-        if (xBall >= sceneWidth) {
+        if (playball.getx() >= sceneWidth) {
             resetColideFlags();
             //vX = 1.000;
             colideToRightWall = true;
         }
 
-        if (xBall <= 0) {
+        if (playball.getx() <= 0) {
             resetColideFlags();
             //vX = 1.000;
             colideToLeftWall = true;
@@ -479,38 +471,38 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         if (colideToBreak) {
             if (colideToBreakAndMoveToRight) {
-                goRightBall = true;
+                playball.gorightball();
             } else {
-                goRightBall = false;
+                playball.goleftball();
             }
         }
 
         //Wall Colide
 
         if (colideToRightWall) {
-            goRightBall = false;
+            playball.goleftball();
         }
 
         if (colideToLeftWall) {
-            goRightBall = true;
+            playball.gorightball();
         }
 
         //Block Colide
 
         if (colideToRightBlock) {
-            goRightBall = true;
+            playball.gorightball();
         }
 
         if (colideToLeftBlock) {
-            goRightBall = false;
+            playball.goleftball();
         }
 
         if (colideToTopBlock) {
-            goDownBall = false;
+            playball.goupball();
         }
 
         if (colideToBottomBlock) {
-            goDownBall = true;
+            playball.godownball();
         }
 
 
@@ -741,8 +733,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
                 rect.setX(xBreak);
                 rect.setY(yBreak);
-                ball.setCenterX(xBall);
-                ball.setCenterY(yBall);
+                ball.setCenterX(playball.getx());
+                ball.setCenterY(playball.gety());
 
                 for (Bonus choco : chocos) {
                     choco.choco.setY(choco.y);
@@ -754,9 +746,9 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         });
 
 
-        if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+        if (playball.gety() >= Block.getPaddingTop() && playball.gety() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
             for (final Block block : blocks) {
-                double hitCode = block.checkHitToBlock(xBall, yBall, ballRadius);
+                double hitCode = block.checkHitToBlock(playball.getx(), playball.gety(), ballRadius);
                 if (hitCode != Block.NO_HIT) {
                     score += 1;
 
