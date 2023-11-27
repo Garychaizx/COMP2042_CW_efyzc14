@@ -63,6 +63,7 @@ public class Model {
     private long time     = 0;
     private long hitTime  = 0;
     private int  heart    = 10000;
+    private int score;
 
     public Ball initBall() {
         ball = new Circle();
@@ -336,8 +337,31 @@ public class Model {
         snows.clear();
         destroyedBlockCount = 0;
     }
+    public void resetGame(Ball playball) {
+        level = 0;
+        heart = 3;
+        score = 0;
+        playball.setvx(1.000);
+        destroyedBlockCount = 0;
+        resetColideFlags();
+        playball.godownball();
+
+        isGoldStauts = false;
+//            isSnowStauts = false;
+        isExistHeartBlock = false;
+        hitTime = 0;
+        time = 0;
+        goldTime = 0;
+//            snowTime=0;
+
+        blocks.clear();
+        chocos.clear();
+        snows.clear();
+    }
 
     //getter
+    public int getScore(){return score;}
+    public int getLevel(){return level;}
     public Circle getBall() {
         return ball;
     }

@@ -57,7 +57,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
 //    private double v = 1.000;
 
-    private int  heart    = 10000;
+    private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -620,65 +620,12 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         start(primaryStage);
     }
 
-//    private void nextLevel() {
-//        if (!nextLevelInProgress) {
-//            nextLevelInProgress = true;
-//
-//            Platform.runLater(() -> {
-//                try {
-//                    vX = 1.000;
-//
-//                    engine.stop();
-//                    model.resetColideFlags();
-//                    playball.godownball();
-//
-//                    isGoldStauts = false;
-////                    isSnowStauts = false;
-//                    isExistHeartBlock = false;
-//
-//                    hitTime = 0;
-//                    time = 0;
-//                    goldTime = 0;
-////                    snowTime=0;
-//
-//                    engine.stop();
-//                    blocks.clear();
-//                    chocos.clear();
-//                    snows.clear();
-//                    destroyedBlockCount = 0;
-//                    start(primaryStage);
-//
-//                    nextLevelInProgress = false;
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//        }
-//    }
-
     public void restartGame() {
 
         try {
-            level = 0;
-            heart = 3;
-            score = 0;
-            vX = 1.000;
-            destroyedBlockCount = 0;
-            model.resetColideFlags();
-            playball.godownball();
-
-            isGoldStauts = false;
-//            isSnowStauts = false;
-            isExistHeartBlock = false;
-            hitTime = 0;
-            time = 0;
-            goldTime = 0;
-//            snowTime=0;
-
-            blocks.clear();
-            chocos.clear();
-            snows.clear();
-
+            model.resetGame(playball);
+            level= model.getLevel();
+            score= model.getScore();
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -777,6 +724,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
     }
+
     @Override
     public void onInit() {
 
