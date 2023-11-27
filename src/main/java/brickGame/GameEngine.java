@@ -20,7 +20,7 @@ public class GameEngine {
     }
 
     /**
-     * @param fps set fps and we convert it to millisecond
+     * @param fps set fps and we convert it to milliseconds
      */
     public void setFps(int fps) {
         this.fps = (int) 1000 / fps;
@@ -31,7 +31,6 @@ public class GameEngine {
     }
 
     public void start() {
-        time = 0;
         initialize();
         createUpdateTimeline();
         createPhysicsTimeline();
@@ -46,6 +45,19 @@ public class GameEngine {
             physicsTimeline.stop();
             timeTimeline.stop();
         }
+    }
+
+    // New method to save the current time state
+    public long saveTimeState() {
+        return time;
+    }
+
+    // New method to restore the time state
+    public void restoreTimeState(long savedTime) {
+        time = savedTime;
+    }
+    public long getCurrentTime() {
+        return time;
     }
 
     private void createUpdateTimeline() {
