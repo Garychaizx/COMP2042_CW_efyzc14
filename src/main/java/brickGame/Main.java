@@ -57,7 +57,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
 //    private double v = 1.000;
 
-    private int  heart    = 1;
+    private int  heart    = 10000;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -197,37 +197,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     }
 
-//    private void initBoard() {
-//        for (int i = 0; i < 4; i++) {
-//            for (int j = 0; j < level + 1; j++) {
-//                int r = new Random().nextInt(500);
-//                if (r % 5 == 0) {
-//                    continue;
-//                }
-//                int type;
-//                if (r % 10 == 1) {
-//                    type = Block.BLOCK_CHOCO;
-//                } else if (r % 10 == 2) {
-//                    if (!isExistHeartBlock) {
-//                        type = Block.BLOCK_HEART;
-//                        isExistHeartBlock = true;
-//                    } else {
-//                        type = Block.BLOCK_NORMAL;
-//                    }
-//                } else if (r % 10 == 3) {
-//                    type = Block.BLOCK_STAR;
-//                } else if (r % 10 == 4) {
-//                    type = Block.BLOCK_SNOW;
-//                } else {
-//                    type = Block.BLOCK_NORMAL;
-//                }
-//                blocks.add(new Block(j, i, colors[r % (colors.length)], type));
-//                //System.out.println("colors " + r % (colors.length));
-//            }
-//        }
-//    }
-
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -311,10 +280,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         }
     }
 
-
-
-    float oldXBreak;
-
     private void move(final int direction) {
         new Thread(new Runnable() {
             @Override
@@ -348,33 +313,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     }
 
-
-//    private void initBall() {
-//        Random random = new Random();
-//        yBall = random.nextInt(sceneHeigt - 200) + ((level + 1) * Block.getHeight()) + 15;
-//        xBall = random.nextInt(sceneWidth) + 1;
-//        xBall = xBreak + (breakWidth / 2);
-//        yBall = yBreak - ballRadius - 40;
-//        ball = new Circle();
-//        ball.setRadius(ballRadius);
-//        ball.setFill(new ImagePattern(new Image("ball.png")));
-//        playball= new Ball(xBall,yBall,ballRadius);
-//
-//    }
-
-//    private void initBreak() {
-//        rect = new Rectangle();
-//        rect.setWidth(breakWidth);
-//        rect.setHeight(breakHeight);
-//        rect.setX(xBreak);
-//        rect.setY(yBreak);
-//
-//        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
-//        paddle=new Break(xBreak,yBreak,breakWidth,breakHeight);
-//        rect.setFill(pattern);
-//    }
-
-
     private boolean goDownBall                  = true;
     private boolean goRightBall                 = true;
     private boolean colideToBreak               = false;
@@ -388,20 +326,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private double vX = 1.000;
     private double vY = 1.000;
-
-
-//    private void resetColideFlags() {
-//
-//        colideToBreak = false;
-//        colideToBreakAndMoveToRight = false;
-//        colideToRightWall = false;
-//        colideToLeftWall = false;
-//
-//        colideToRightBlock = false;
-//        colideToBottomBlock = false;
-//        colideToLeftBlock = false;
-//        colideToTopBlock = false;
-//    }
 
     private void setPhysicsToBall() {
         playball.updatePosition();
@@ -423,31 +347,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
     }
-
-//
-//    private void handleBallMovement() {
-//        if (colideToBreak) {
-//            if (colideToBreakAndMoveToRight) {
-//                playball.gorightball();
-//            } else {
-//                playball.goleftball();
-//            }
-//        } else if (colideToRightWall) {
-//            playball.goleftball();
-//        } else if (colideToLeftWall) {
-//            playball.gorightball();
-//        } else if (colideToRightBlock) {
-//            playball.gorightball();
-//        } else if (colideToLeftBlock) {
-//            playball.goleftball();
-//        } else if (colideToTopBlock) {
-//            playball.goupball();
-//        } else if (colideToBottomBlock) {
-//            playball.godownball();
-//        }
-//    }
-
-
 
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
@@ -533,44 +432,11 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         LoadSave loadSave = new LoadSave();
         loadSave.read();
-
-
-        isExistHeartBlock = loadSave.isExistHeartBlock;
-        isGoldStauts = loadSave.isGoldStauts;
-//        isSnowStauts = loadSave.isSnowStauts;
-        goDownBall = loadSave.goDownBall;
-        goRightBall = loadSave.goRightBall;
-        colideToBreak = loadSave.colideToBreak;
-        colideToBreakAndMoveToRight = loadSave.colideToBreakAndMoveToRight;
-        colideToRightWall = loadSave.colideToRightWall;
-        colideToLeftWall = loadSave.colideToLeftWall;
-        colideToRightBlock = loadSave.colideToRightBlock;
-        colideToBottomBlock = loadSave.colideToBottomBlock;
-        colideToLeftBlock = loadSave.colideToLeftBlock;
-        colideToTopBlock = loadSave.colideToTopBlock;
-        level = loadSave.level;
-        score = loadSave.score;
-        heart = loadSave.heart;
-        destroyedBlockCount = loadSave.destroyedBlockCount;
-        xBall = loadSave.xBall;
-        yBall = loadSave.yBall;
-        xBreak = loadSave.xBreak;
-        yBreak = loadSave.yBreak;
-        centerBreakX = loadSave.centerBreakX;
-        time = loadSave.time;
-        goldTime = loadSave.goldTime;
-//        snowTime = loadSave.snowTime;
-        vX = loadSave.vX;
-
-        blocks.clear();
-        chocos.clear();
-        snows.clear();
-
-        for (BlockSerializable ser : loadSave.blocks) {
-            int r = new Random().nextInt(200);
-            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
-        }
-
+        model.setGameState(loadSave,playball,paddle);
+        level= model.getLevel();
+        score= model.getScore();
+        heart= model.getHeart();
+        model.restoreBlocks(loadSave,blocks);
 
         try {
             loadFromSave = true;
@@ -626,12 +492,12 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             model.resetGame(playball);
             level= model.getLevel();
             score= model.getScore();
+            heart= model.getHeart();
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void onUpdate() {
@@ -641,11 +507,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
                 scoreLabel.setText("Score: " + score);
                 heartLabel.setText("Heart : " + heart);
-
-                model.getRect().setX(paddle.getxbreak());
-                model.getRect().setY(paddle.getybreak());
-                model.getBall().setCenterX(playball.getx());
-                model.getBall().setCenterY(playball.gety());
+                model.setBallPaddle(playball,paddle);
 
                 for (Bonus choco : chocos) {
                     choco.choco.setY(choco.y);
@@ -687,6 +549,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                         goldTime = time;
                         model.getBall().setFill(new ImagePattern(new Image("goldball.png")));
                         System.out.println("gold ball");
+                        root.setStyle("-fx-background-image: none;");
                         root.getStyleClass().add("goldRoot");
                         isGoldStauts = true;
                     }
@@ -706,17 +569,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     if (block.type == Block.BLOCK_HEART) {
                         heart++;
                     }
-
-                    if (hitCode == Block.HIT_RIGHT) {
-                        model.setColideToRightBlock(true);
-                    } else if (hitCode == Block.HIT_BOTTOM) {
-                        model.setColideToBottomBlock(true);
-                    } else if (hitCode == Block.HIT_LEFT) {
-                        model.setColideToLeftBlock(true);
-                    } else if (hitCode == Block.HIT_TOP) {
-                        model.setColideToTopBlock(true);
-                    }
-
+                    model.setCollision(hitCode);
                 }
 
                 //TODO hit to break and some work here....
@@ -743,79 +596,59 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             return; // Skip physics update if the game is paused
         }
 
-        //make the gold status call once
-        // Check if the gold ball status is active and update the background
-        if (isGoldStauts) {
-            if (time - goldTime <= 5000) {
-                model.getBall().setFill(new ImagePattern(new Image("goldball.png")));
-                root.getStyleClass().add("goldRoot");
-                root.setStyle("-fx-background-image: none;");
-                System.out.println("called");
-            } else {
-                // Reset to normal ball and background after the gold ball duration
-                model.getBall().setFill(new ImagePattern(new Image("ball.png")));
-                root.getStyleClass().remove("goldRoot");
-                root.setStyle("-fx-background-image: url('bg.jpg');");
-                isGoldStauts = false;
-                goldTime = 0; // Reset goldTime
-                System.out.println("called");
-            }
+        if (time - goldTime > 5000) {
+            model.getBall().setFill(new ImagePattern(new Image("ball.png")));
+            root.getStyleClass().remove("goldRoot");
+            root.setStyle("-fx-background-image: url('bg.jpg');");
+            isGoldStauts = false;
+            goldTime = 0;
         }
-        root.getStyleClass().remove("goldRoot");
-
         for (Bonus choco : chocos) {
-            if (choco.y > sceneHeigt || choco.taken) {
+            if (model.shouldSkipChoco(choco)) {
                 continue;
             }
-            if (choco.y >= paddle.getybreak() && choco.y <= paddle.getybreak() + paddle.getbreakheight() && choco.x >= paddle.getxbreak() && choco.x <= paddle.getxbreak() + paddle.getbreakwidth()) {
-                System.out.println("You Got it and +3 score for you");
-                choco.taken = true;
-                choco.choco.setVisible(false);
-                score += 3;
-                new Score().show(choco.x, choco.y, 3, this);
+
+            if (model.isChocoCaught(choco, paddle)) {
+                handleCaughtChoco(choco);
             }
-            choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
+            model.updateChocoPosition(choco, time);
         }
         for (Bonus snow : snows) {
-            if (snow.y > sceneHeigt || snow.taken) {
+            if (model.shouldSkipSnow(snow)) {
                 continue;
             }
-            if (snow.y >= paddle.getybreak() && snow.y <= paddle.getybreak() + paddle.getbreakwidth() && snow.x >= paddle.getxbreak() && snow.x <= paddle.getxbreak() + paddle.getbreakwidth()) {
-                System.out.println("You Got a Penalty!(Ball will slow down for 10 seconds)");
-                snow.taken = true;
-                snow.snow.setVisible(false);
-                activateSnowBonus(); // Activate snow bonus on collision
+
+            if (model.isSnowCaught(snow, paddle)) {
+                handleCaughtSnow(snow);
             }
-            snow.y += ((time - snow.timeCreated) / 1000.000) + 1.000;
+
+            model.updateSnowPosition(snow, time);
         }
 
         // Check for active snow bonus and update the ball speed
         if (isSnowBonusActive) {
-            // Adjust the ball speed during the snow bonus
-            playball.setvx(playball.getVx()*slowdownFactor);
-            playball.setvy(playball.getVy()*slowdownFactor);
-            // Ensure the speed doesn't go below the targetSlowSpeed
-            playball.setvx(Math.max(playball.getVx(), targetSlowSpeed));
-            playball.setvy(Math.max(playball.getVy(), targetSlowSpeed));
-            model.getBall().setFill(new ImagePattern(new Image("snowball.png")));
-            long elapsedTime = time - snowBonusStartTime;
-            if (elapsedTime >= SNOW_BONUS_DURATION) {
-                // Snow bonus duration expired, reset the ball speed
-                playball.setvx(1.0); // Reset to the original speed
-                playball.setvy(1.0);
-                isSnowBonusActive = false;
-                model.getBall().setFill(new ImagePattern(new Image("ball.png")));
-            }
+            model.PenaltyActive(playball, time, snowBonusStartTime);
         }
     }
+
+    private void handleCaughtSnow(Bonus snow) {
+        System.out.println("You Got a Penalty! (Ball will slow down for 10 seconds)");
+        snow.taken = true;
+        snow.snow.setVisible(false);
+        activateSnowBonus(); // Activate snow bonus on collision
+    }
+
     private void activateSnowBonus() {
         isSnowBonusActive = true;
         snowBonusStartTime = time;
     }
-
-
-
-
+    private void handleCaughtChoco(Bonus choco) {
+        System.out.println("You Got it and +3 score for you");
+        choco.taken = true;
+        choco.choco.setVisible(false);
+        score += 3;
+        new Score().show(choco.x, choco.y, 3, this);
+    }
     @Override
     public void onTime(long time) {
         this.time = time;

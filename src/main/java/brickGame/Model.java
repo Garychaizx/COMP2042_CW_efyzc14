@@ -345,21 +345,109 @@ public class Model {
         destroyedBlockCount = 0;
         resetColideFlags();
         playball.godownball();
-
         isGoldStauts = false;
-//            isSnowStauts = false;
         isExistHeartBlock = false;
         hitTime = 0;
         time = 0;
         goldTime = 0;
-//            snowTime=0;
-
         blocks.clear();
         chocos.clear();
         snows.clear();
     }
+    public void setGameState(LoadSave loadSave,Ball playball,Break paddle){
+        this.setExistHeartBlock(loadSave.isExistHeartBlock);
+        this.setIsGoldStauts(loadSave.isGoldStauts);
+        this.setGoDownBall(loadSave.goDownBall);
+        this.setGoRightBall(loadSave.goRightBall);
+        this.setColideToBreak(loadSave.colideToBreak);
+        this.setColideToBreakAndMoveToRight(loadSave.colideToBreakAndMoveToRight);
+        this.setColideToRightWall(loadSave.colideToRightWall);
+        this.setColideToLeftWall(loadSave.colideToLeftWall);
+        this.setColideToRightBlock(loadSave.colideToRightBlock);
+        this.setColideToBottomBlock(loadSave.colideToBottomBlock);
+        this.setColideToLeftBlock(loadSave.colideToLeftBlock);
+        this.setColideToTopBlock(loadSave.colideToTopBlock);
+        this.setLevel(loadSave.level);
+        this.setScore(loadSave.score);
+        this.setHeart(loadSave.heart);
+        this.setDestroyedBlockCount(loadSave.destroyedBlockCount);
+        this.setXBall(loadSave.xBall);
+        this.setYBall(loadSave.yBall);
+        this.setXBreak(loadSave.xBreak);
+        this.setYBreak(loadSave.yBreak);
+        this.setTime(loadSave.time);
+        this.setGoldTime(loadSave.goldTime);
+        playball.setvx(loadSave.vX);
+        paddle.setcenterbreakx(loadSave.centerBreakX);
+    }
+    public void restoreBlocks(LoadSave loadSave,ArrayList<Block> blocks){
+        blocks.clear();
+        for (BlockSerializable ser : loadSave.blocks) {
+            int r = new Random().nextInt(200);
+            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
+        }
+    }
+    public void setBallPaddle(Ball playball,Break paddle){
+        getRect().setX(paddle.getxbreak());
+        getRect().setY(paddle.getybreak());
+        getBall().setCenterX(playball.getx());
+        getBall().setCenterY(playball.gety());
+    }
+    public void setCollision(double  hitCode){
+        if (hitCode == Block.HIT_RIGHT) {
+            setColideToRightBlock(true);
+        } else if (hitCode == Block.HIT_BOTTOM) {
+            setColideToBottomBlock(true);
+        } else if (hitCode == Block.HIT_LEFT) {
+            setColideToLeftBlock(true);
+        } else if (hitCode == Block.HIT_TOP) {
+            setColideToTopBlock(true);
+        }
+    }
+    public boolean shouldSkipChoco(Bonus choco) {
+        return choco.y > sceneHeigt || choco.taken;
+    }
+
+    public boolean isChocoCaught(Bonus choco,Break paddle) {
+        return choco.y >= paddle.getybreak() && choco.y <= paddle.getybreak() + paddle.getbreakheight()
+                && choco.x >= paddle.getxbreak() && choco.x <= paddle.getxbreak() + paddle.getbreakwidth();
+    }
+    public void updateChocoPosition(Bonus choco,long time) {
+        choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
+    }
+    public boolean shouldSkipSnow(Bonus snow) {
+        return snow.y > sceneHeigt || snow.taken;
+    }
+    public boolean isSnowCaught(Bonus snow,Break paddle) {
+        return snow.y >= paddle.getybreak() && snow.y <= paddle.getybreak() + paddle.getbreakwidth()
+                && snow.x >= paddle.getxbreak() && snow.x <= paddle.getxbreak() + paddle.getbreakwidth();
+    }
+    public void updateSnowPosition(Bonus snow,long time) {
+        snow.y += ((time - snow.timeCreated) / 1000.000) + 1.000;
+    }
+    private double targetSlowSpeed = 0.3; // Set your desired slow speed
+    private double slowdownFactor = 0.98; // Adjust the factor to control the slowdown rate
+    private final long SNOW_BONUS_DURATION = 10000; // Duration of snow bonus in milliseconds (10 seconds)
+    private boolean isSnowBonusActive = false;
+    public void PenaltyActive(Ball playball,long time,long snowBonusStartTime){
+        playball.setvx(playball.getVx()*slowdownFactor);
+        playball.setvy(playball.getVy()*slowdownFactor);
+        // Ensure the speed doesn't go below the targetSlowSpeed
+        playball.setvx(Math.max(playball.getVx(), targetSlowSpeed));
+        playball.setvy(Math.max(playball.getVy(), targetSlowSpeed));
+        ball.setFill(new ImagePattern(new Image("snowball.png")));
+        long elapsedTime = time - snowBonusStartTime;
+        if (elapsedTime >= SNOW_BONUS_DURATION) {
+            // Snow bonus duration expired, reset the ball speed
+            playball.setvx(1.0); // Reset to the original speed
+            playball.setvy(1.0);
+            isSnowBonusActive = false;
+            ball.setFill(new ImagePattern(new Image("ball.png")));}
+    }
 
     //getter
+    public int getDestroyedBlockCount(){return destroyedBlockCount;}
+    public int getHeart(){return heart;}
     public int getScore(){return score;}
     public int getLevel(){return level;}
     public Circle getBall() {
@@ -392,6 +480,58 @@ public class Model {
     }
 
     //setter
+    public void setIsGoldStauts(boolean isGoldStauts) {
+        this.isGoldStauts = isGoldStauts;
+    }
+
+    public void setGoDownBall(boolean goDownBall) {
+        this.goDownBall = goDownBall;
+    }
+
+    public void setGoRightBall(boolean goRightBall) {
+        this.goRightBall = goRightBall;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setHeart(int heart) {
+        this.heart = heart;
+    }
+
+    public void setDestroyedBlockCount(int destroyedBlockCount) {
+        this.destroyedBlockCount = destroyedBlockCount;
+    }
+
+    public void setXBall(double xBall) {
+        this.xBall = xBall;
+    }
+
+    public void setYBall(double yBall) {
+        this.yBall = yBall;
+    }
+
+    public void setXBreak(double xBreak) {
+        this.xBreak = xBreak;
+    }
+
+    public void setYBreak(double yBreak) {
+        this.yBreak = yBreak;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public void setGoldTime(long goldTime) {
+        this.goldTime = goldTime;
+    }
+    public void setExistHeartBlock(boolean isExistHeartBlock){this.isExistHeartBlock=isExistHeartBlock;}
     public void setColideToBreak(boolean colideToBreak) {
         this.colideToBreak = colideToBreak;
     }
