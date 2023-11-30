@@ -64,25 +64,16 @@ public class Model {
     private long hitTime  = 0;
     private int  heart    = 10000;
     private int score;
+//    private View view = new View();
 
     public Ball initBall() {
-        ball = new Circle();
-        ball.setRadius(ballRadius);
-        ball.setFill(new ImagePattern(new Image("ball.png")));
+        getBall();
         xBall = xBreak + (breakWidth / 2);
         yBall = yBreak - ballRadius - 40;
         return new Ball(xBall,yBall,ballRadius);
     }
     public Break initBreak() {
-        rect = new Rectangle();
-        rect.setWidth(breakWidth);
-        rect.setHeight(breakHeight);
-        rect.setX(xBreak);
-        rect.setY(yBreak);
-
-        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
-
-        rect.setFill(pattern);
+        getRect();
         return new Break(xBreak,yBreak,breakWidth,breakHeight);
     }
     public void initBoard(ArrayList<Block> blocks,int level,boolean isExistHeartBlock) {
@@ -415,37 +406,109 @@ public class Model {
     public void updateChocoPosition(Bonus choco,long time) {
         choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
     }
-    public boolean shouldSkipSnow(Bonus snow) {
-        return snow.y > sceneHeigt || snow.taken;
+//    public boolean shouldSkipSnow(Bonus snow) {
+//        return snow.y > sceneHeigt || snow.taken;
+//    }
+//    public boolean isSnowCaught(Bonus snow,Break paddle) {
+//        return snow.y >= paddle.getybreak() && snow.y <= paddle.getybreak() + paddle.getbreakwidth()
+//                && snow.x >= paddle.getxbreak() && snow.x <= paddle.getxbreak() + paddle.getbreakwidth();
+//    }
+//    public void updateSnowPosition(Bonus snow,long time) {
+//        snow.y += ((time - snow.timeCreated) / 1000.000) + 1.000;
+//    }
+//    private double targetSlowSpeed = 0.3; // Set your desired slow speed
+//    private double slowdownFactor = 0.98; // Adjust the factor to control the slowdown rate
+//    private final long SNOW_BONUS_DURATION = 10000; // Duration of snow bonus in milliseconds (10 seconds)
+//    private boolean isSnowBonusActive = false;
+//    public void PenaltyActive(Ball playball,long time,long snowBonusStartTime){
+//        playball.setvx(playball.getVx()*slowdownFactor);
+//        playball.setvy(playball.getVy()*slowdownFactor);
+//        // Ensure the speed doesn't go below the targetSlowSpeed
+//        playball.setvx(Math.max(playball.getVx(), targetSlowSpeed));
+//        playball.setvy(Math.max(playball.getVy(), targetSlowSpeed));
+//        ball.setFill(new ImagePattern(new Image("snowball.png")));
+//        long elapsedTime = time - snowBonusStartTime;
+//        if (elapsedTime >= SNOW_BONUS_DURATION) {
+//            // Snow bonus duration expired, reset the ball speed
+//            playball.setvx(1.0); // Reset to the original speed
+//            playball.setvy(1.0);
+//            isSnowBonusActive = false;
+//            ball.setFill(new ImagePattern(new Image("ball.png")));}
+//    }
+
+    private static final double TARGET_SLOW_SPEED = 0.3;
+    private static final double SLOWDOWN_FACTOR = 0.98;
+    private static final long SNOW_BONUS_DURATION = 10000;
+
+    private boolean isSnowBonusActive = false;
+    private long snowBonusStartTime = 0;
+    public void handleSnowBonusCollision(Bonus snow, Ball playball, Break paddle, long time) {
+        if (snow.y > sceneHeigt || snow.taken) {
+            return;
+        }
+
+        if (isSnowCaught(snow, paddle)) {
+            System.out.println("You Got a Penalty! (Ball will slow down for 10 seconds)");
+            snow.taken = true;
+            snow.snow.setVisible(false);
+            activateSnowBonus(time); // Activate snow bonus on collision
+        }
     }
-    public boolean isSnowCaught(Bonus snow,Break paddle) {
+
+    private boolean isSnowCaught(Bonus snow, Break paddle) {
         return snow.y >= paddle.getybreak() && snow.y <= paddle.getybreak() + paddle.getbreakwidth()
                 && snow.x >= paddle.getxbreak() && snow.x <= paddle.getxbreak() + paddle.getbreakwidth();
     }
-    public void updateSnowPosition(Bonus snow,long time) {
-        snow.y += ((time - snow.timeCreated) / 1000.000) + 1.000;
-    }
-    private double targetSlowSpeed = 0.3; // Set your desired slow speed
-    private double slowdownFactor = 0.98; // Adjust the factor to control the slowdown rate
-    private final long SNOW_BONUS_DURATION = 10000; // Duration of snow bonus in milliseconds (10 seconds)
-    private boolean isSnowBonusActive = false;
-    public void PenaltyActive(Ball playball,long time,long snowBonusStartTime){
-        playball.setvx(playball.getVx()*slowdownFactor);
-        playball.setvy(playball.getVy()*slowdownFactor);
-        // Ensure the speed doesn't go below the targetSlowSpeed
-        playball.setvx(Math.max(playball.getVx(), targetSlowSpeed));
-        playball.setvy(Math.max(playball.getVy(), targetSlowSpeed));
+
+    public void applySnowBonus(Ball playball, long time) {
+        playball.setvx(playball.getVx() * SLOWDOWN_FACTOR);
+        playball.setvy(playball.getVy() * SLOWDOWN_FACTOR);
+
+        playball.setvx(Math.max(playball.getVx(), TARGET_SLOW_SPEED));
+        playball.setvy(Math.max(playball.getVy(), TARGET_SLOW_SPEED));
+
         ball.setFill(new ImagePattern(new Image("snowball.png")));
+
         long elapsedTime = time - snowBonusStartTime;
         if (elapsedTime >= SNOW_BONUS_DURATION) {
             // Snow bonus duration expired, reset the ball speed
-            playball.setvx(1.0); // Reset to the original speed
-            playball.setvy(1.0);
-            isSnowBonusActive = false;
-            ball.setFill(new ImagePattern(new Image("ball.png")));}
+            resetSnowBonus(playball);
+        }
     }
 
+    private void resetSnowBonus(Ball playball) {
+        playball.setvx(1.0); // Reset to the original speed
+        playball.setvy(1.0);
+        isSnowBonusActive = false;
+        ball.setFill(new ImagePattern(new Image("ball.png")));
+    }
+
+    private void activateSnowBonus(long time) {
+        isSnowBonusActive = true;
+        snowBonusStartTime = time;
+    }
+    public void updateSnowPosition(Bonus snow, long time) {
+        snow.y += ((time - snow.timeCreated) / 1000.0) + 1.0;
+    }
+
+
     //getter
+
+    public int getBreakHeight() {
+        return breakHeight;
+    }
+    public int getBreakWidth(){
+            return breakWidth;
+    }
+
+    public double getxBreak() {
+        return xBreak;
+    }
+
+    public double getyBreak() {
+        return yBreak;
+    }
+
     public int getDestroyedBlockCount(){return destroyedBlockCount;}
     public int getHeart(){return heart;}
     public int getScore(){return score;}
@@ -454,6 +517,7 @@ public class Model {
         return ball;
     }
     public Rectangle getRect() {return rect;}
+    public boolean getisSnowBonusActive(){return isSnowBonusActive;}
     public boolean isColideToBreak(){
         return colideToBreak;
     }
@@ -480,6 +544,12 @@ public class Model {
     }
 
     //setter
+    public void setBall(Circle ball){
+        this.ball=ball;
+    }
+    public void setRect(Rectangle rect){
+        this.rect=rect;
+    }
     public void setIsGoldStauts(boolean isGoldStauts) {
         this.isGoldStauts = isGoldStauts;
     }
