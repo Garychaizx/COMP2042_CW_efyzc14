@@ -47,6 +47,7 @@ public class Block implements Serializable {
     public static int BLOCK_SNOW = 103;
 
 
+
     public Block(int row, int column, Color color, int type) {
         this.row = row;
         this.column = column;

@@ -21,7 +21,6 @@ public class Score {
 
     public void showMessage(String message, final View view) {
         final Label label = createLabel(message, 220, 340);
-
         Platform.runLater(() -> view.root.getChildren().add(label));
         animateLabel(label, 21, i -> Math.abs(i - 10), 20);
     }

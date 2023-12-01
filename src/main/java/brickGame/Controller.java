@@ -26,7 +26,7 @@ import static javafx.application.Application.launch;
 
 public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction  {
 
-    private int level = 0;
+    private int level = 17;
 
     private double xBreak = 0.0f;
     private double centerBreakX;
@@ -44,14 +44,14 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private boolean isGoldStauts      = false;
     private boolean isExistHeartBlock = false;
 
-//    private Rectangle rect;
+    //    private Rectangle rect;
     private int       ballRadius = 10;
 
     private int destroyedBlockCount = 0;
 
 //    private double v = 1.000;
 
-    private int  heart    = 1;
+    private int  heart    = 3;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -110,9 +110,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
             if (level >1){
                 view.showLevelUpMsg();
             }
-            if (level == 18){
 
-            }
             if (level == 19) {
                 view.showWinMsg();
                 return;
@@ -121,7 +119,14 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
             playball=model.initBall();
             paddle=model.initBreak();
             model.initBoard(blocks,level,isExistHeartBlock);
-
+            if (level == 18){
+                blocks.clear();
+                view.showBonusLevelMsg();
+                model.initBonus(blocks);
+                playball.setvx(2.0);
+                playball.setvy(2.0);
+                System.out.println("Bonus level! (Speed of the ball x 2)");
+            }
             view.loadButton();
         }
         view.setScene(model,blocks,primaryStage,score,level);
@@ -129,7 +134,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         scene.setOnKeyPressed(this);
 
         if (loadFromSave == false) {
-            if (level > 1 && level < 18) {
+            if (level > 1 && level < 19) {
                 view.hideButtons();
                 engine = new GameEngine();
                 engine.setOnAction(this);

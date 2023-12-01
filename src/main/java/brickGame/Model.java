@@ -106,6 +106,33 @@ public class Model {
             }
         }
     }
+    public void initBonus(ArrayList<Block> blocks) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < level + 14; j++) {
+                int r = new Random().nextInt(500);
+                if (r % 5 == 0) {
+                    continue;
+                }
+                int type;
+                if (r % 10 == 1) {
+                    type = Block.BLOCK_CHOCO;
+                } else if (r % 10 == 2) {
+                    if (!isExistHeartBlock) {
+                        type = Block.BLOCK_HEART;
+                        isExistHeartBlock = true;
+                    } else {
+                        type = Block.BLOCK_SNOW;
+                    }
+                } else if (r % 10 == 3) {
+                    type = Block.BLOCK_STAR;
+                } else {
+                    type = Block.BLOCK_CHOCO;
+                }
+                blocks.add(new Block(j, i, colors[r % (colors.length)], type));
+                //System.out.println("colors " + r % (colors.length));
+            }
+        }
+    }
     public void handleWallCollisions(Ball playball,int sceneWidth) {
         if (playball.gety() <= 0) {
             handleTopWallCollision(playball);
@@ -296,6 +323,7 @@ public class Model {
 //
 //
 //    }
+
 
     public void resetColideFlags() {
 

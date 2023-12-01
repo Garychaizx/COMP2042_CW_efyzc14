@@ -107,14 +107,6 @@ private Button newGame=new Button("Start New Game");
         root.setStyle("-fx-background-image: none;");
         root.getStyleClass().add("goldRoot");
     }
-//    public void SnowState(){
-//        ball.setFill(new ImagePattern(new Image("snowball.png")));
-//    }
-//    public void SnowTaken(){
-//        System.out.println("You Got a Penalty! (Ball will slow down for 10 seconds)");
-//        snow.taken = true;
-//        snow.snow.setVisible(false);
-//    }
     public void RemoveGoldState(){
         ball.setFill(new ImagePattern(new Image("ball.png")));
         root.getStyleClass().remove("goldRoot");
@@ -147,6 +139,7 @@ private Button newGame=new Button("Start New Game");
     public void showSavedMsg(){
         new Score().showMessage("Game Saved", View.this);
     }
+    public void showBonusLevelMsg(){new Score().showMessage("Bonus Level",this);}
     public void showGameOverMsg(Controller controller){
         new Score().showGameOver(this, controller);
     }
