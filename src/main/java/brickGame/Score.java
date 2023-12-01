@@ -80,8 +80,6 @@ public class Score {
         timeline.play();
     }
 
-
-
 }
 
 

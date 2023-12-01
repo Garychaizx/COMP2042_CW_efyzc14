@@ -23,7 +23,7 @@ private Button newGame=new Button("Start New Game");
     private Label            scoreLabel;
     private Label            heartLabel;
     private Label            levelLabel;
-    private int  heart    = 10000;
+    private int  heart    = 3;
 //    private int  score    = 0;
 //    private int level = 0;
     private int sceneWidth = 500;
@@ -36,6 +36,7 @@ private Button newGame=new Button("Start New Game");
     private boolean loadFromSave = false;
     Scene scene;
     private Model model = new Model();
+    private Sound sound = new Sound();
     private Main main;
 //    public View (Main main){
 //        this.main=main;
@@ -120,6 +121,7 @@ private Button newGame=new Button("Start New Game");
         root.setStyle("-fx-background-image: url('bg.jpg');");
     }
     public int handleCaughtChoco(Bonus choco,int score) {
+        sound.playBonusSound();
         System.out.println("You Got it and +3 score for you");
         choco.taken = true;
         choco.choco.setVisible(false);

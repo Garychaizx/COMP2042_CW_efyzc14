@@ -51,7 +51,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
 
 //    private double v = 1.000;
 
-    private int  heart    = 3;
+    private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -96,6 +96,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private Break paddle;
     private Model model = new Model();
     private View view = new View();
+    private Sound sound = new Sound();
     private long savedTime;
 
 
@@ -109,7 +110,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
             if (level >1){
                 view.showLevelUpMsg();
             }
-            if (level == 18) {
+            if (level == 18){
+
+            }
+            if (level == 19) {
                 view.showWinMsg();
                 return;
             }
@@ -301,8 +305,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         if (!isGoldStauts && playball.gety() >= sceneHeigt) {
             heart--;
             view.minusHeart();
-
+            sound.playMinusHeartSound();
             if (heart == 0) {
+                sound.playGameOverSound();
                 view.showGameOverMsg(this);
                 engine.stop();
             }
@@ -423,6 +428,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
 
     private boolean nextLevelInProgress = false;
     private void nextLevel() {
+        sound.playNextLevelSound();
         resetSnowBonus(playball);
         if (nextLevelInProgress) {
             return;
@@ -449,9 +455,8 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     }
 
     public void restartGame() {
-
         try {
-            resetSnowBonus(playball);
+            model.clearPenalty(playball);
             model.resetGame(playball);
             level= model.getLevel();
             score= model.getScore();
@@ -480,6 +485,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
             for (final Block block : blocks) {
                 double hitCode = block.checkHitToBlock(playball.getx(), playball.gety(), ballRadius);
                 if (hitCode != Block.NO_HIT) {
+                    //sound.playHitSound();
                     score += 1;
 
                     view.addScore(block);
@@ -491,6 +497,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
                     model.resetColideFlags();
 
                     if (block.type == Block.BLOCK_CHOCO) {
+                        sound.playHitSound();
                         final Bonus choco = new Bonus(block.row, block.column);
                         choco.timeCreated = time;
                         Platform.runLater(new Runnable() {
@@ -503,11 +510,13 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
                     }
 
                     if (block.type == Block.BLOCK_STAR) {
+                        sound.playGoldBallSound();
                         goldTime = time;
                         view.GoldState();
                         isGoldStauts = true;
                     }
                     if (block.type == Block.BLOCK_SNOW) {
+                        sound.playHitSound();
                         final Bonus snow = new Bonus(block.row, block.column);
                         snow.timeCreated = time;
                         Platform.runLater(new Runnable() {
@@ -521,8 +530,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
                     }
 
                     if (block.type == Block.BLOCK_HEART) {
+                        sound.playExtraHeartSound();
                         heart++;
                     }
+                    sound.playHitSound();
                     model.setCollision(hitCode);
                 }
 

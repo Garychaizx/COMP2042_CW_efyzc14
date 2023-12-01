@@ -62,8 +62,9 @@ public class Model {
     private boolean isGoldStauts      = false;
     private long time     = 0;
     private long hitTime  = 0;
-    private int  heart    = 10000;
+    private int  heart    = 3;
     private int score;
+    private Sound sound = new Sound();
 //    private View view = new View();
 
     public Ball initBall() {
@@ -125,9 +126,6 @@ public class Model {
     public void handleBottomWallCollision(Ball playball) {
         resetColideFlags();
         playball.goupball();
-//        if (!isGoldStauts) {
-//            handleGameOver();
-//        }
     }
 
     public void handleRightWallCollision(Ball playball) {
@@ -378,6 +376,13 @@ public class Model {
             blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
         }
     }
+    public void clearPenalty(Ball playball) {
+        playball.setvx(1.0); // Reset to the original speed
+        playball.setvy(1.0);
+        ball.setFill(new ImagePattern(new Image("ball.png")));
+        isSnowBonusActive = false;
+        snowBonusStartTime = 0;
+    }
     public void setBallPaddle(Ball playball,Break paddle){
         getRect().setX(paddle.getxbreak());
         getRect().setY(paddle.getybreak());
@@ -484,8 +489,12 @@ public class Model {
     }
 
     private void activateSnowBonus(long time) {
+        sound.playSnowBallSound();
         isSnowBonusActive = true;
         snowBonusStartTime = time;
+    }
+    public void deactivateSnowBonus() {
+        isSnowBonusActive = false;
     }
     public void updateSnowPosition(Bonus snow, long time) {
         snow.y += ((time - snow.timeCreated) / 1000.0) + 1.0;
