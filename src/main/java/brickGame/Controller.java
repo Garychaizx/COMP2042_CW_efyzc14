@@ -22,11 +22,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static javafx.application.Application.launch;
-
 public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction  {
-
-    private int level = 17;
 
     private double xBreak = 0.0f;
     private double centerBreakX;
@@ -99,42 +95,37 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private Sound sound = new Sound();
     private long savedTime;
 
-
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         model.setBall(view.createBall());
         model.setRect(view.createRect());
 
         if (loadFromSave == false) {
-            level++;
-            if (level >1){
+            model.setLevel(model.getLevel()+1);
+            if (model.getLevel() >1){
                 view.showLevelUpMsg();
             }
-
-            if (level == 19) {
+            if (model.getLevel()==18){
+                System.out.println("Bonus level!");
+                view.showBonusLevelMsg();
+            }
+            if (model.getLevel() == 19) {
+                blocks.clear();
                 view.showWinMsg();
                 return;
             }
-
             playball=model.initBall();
             paddle=model.initBreak();
-            model.initBoard(blocks,level,isExistHeartBlock);
-            if (level == 18){
-                blocks.clear();
-                view.showBonusLevelMsg();
-                model.initBonus(blocks);
-                playball.setvx(2.0);
-                playball.setvy(2.0);
-                System.out.println("Bonus level! (Speed of the ball x 2)");
-            }
+            model.initBoard(blocks,model.getLevel(),isExistHeartBlock);
             view.loadButton();
+
         }
-        view.setScene(model,blocks,primaryStage,score,level);
+        view.setScene(model,blocks,primaryStage,score,model.getLevel());
         Scene scene = primaryStage.getScene();
         scene.setOnKeyPressed(this);
 
         if (loadFromSave == false) {
-            if (level > 1 && level < 19) {
+            if (model.getLevel() > 1 && model.getLevel() < 19) {
                 view.hideButtons();
                 engine = new GameEngine();
                 engine.setOnAction(this);
@@ -338,7 +329,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
                 try {
                     outputStream = new ObjectOutputStream(new FileOutputStream(file));
 
-                    outputStream.writeInt(level);
+                    outputStream.writeInt(model.getLevel());
                     outputStream.writeInt(score);
                     outputStream.writeInt(heart);
                     outputStream.writeInt(destroyedBlockCount);
@@ -404,9 +395,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         LoadSave loadSave = new LoadSave();
         loadSave.read();
         model.setGameState(loadSave,playball,paddle);
-        level= model.getLevel();
+        model.setLevel(loadSave.level);
         score= model.getScore();
-        heart= model.getHeart();
+        heart=model.getHeart();
         model.restoreBlocks(loadSave,blocks);
 
         try {
@@ -463,9 +454,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         try {
             model.clearPenalty(playball);
             model.resetGame(playball);
-            level= model.getLevel();
-            score= model.getScore();
-            heart= model.getHeart();
+            model.setLevel(0);
+            model.setScore(0);
+            model.setHeart(3);
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -486,7 +477,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
             }
         });
 
-        if (playball.gety() >= Block.getPaddingTop() && playball.gety() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+        if (playball.gety() >= Block.getPaddingTop() && playball.gety() <= (Block.getHeight() * (model.getLevel() + 1)) + Block.getPaddingTop()) {
             for (final Block block : blocks) {
                 double hitCode = block.checkHitToBlock(playball.getx(), playball.gety(), ballRadius);
                 if (hitCode != Block.NO_HIT) {

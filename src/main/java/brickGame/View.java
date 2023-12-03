@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class View {
-private Button load=new Button("Load Game");
-private Button newGame=new Button("Start New Game");
+    private Button load=new Button("Load Game");
+    private Button newGame=new Button("Start New Game");
     public  Pane             root;
     private Label            scoreLabel;
     private Label            heartLabel;
     private Label            levelLabel;
     private int  heart    = 3;
-//    private int  score    = 0;
+    //    private int  score    = 0;
 //    private int level = 0;
     private int sceneWidth = 500;
     private int sceneHeigt = 700;
@@ -38,9 +38,7 @@ private Button newGame=new Button("Start New Game");
     private Model model = new Model();
     private Sound sound = new Sound();
     private Main main;
-//    public View (Main main){
-//        this.main=main;
-//    }
+    private Controller controller;
 
     public void loadButton() {
         load = new Button("Load Game");
@@ -75,7 +73,7 @@ private Button newGame=new Button("Start New Game");
         levelLabel.setTranslateY(20);
         heartLabel = new Label("Heart : " + heart);
         heartLabel.setTranslateX(sceneWidth - 70);
-        if (loadFromSave == false) {
+        if (loadFromSave == false && model.getLevel()!= 19) {
             root.getChildren().addAll(model.getRect(), model.getBall(), scoreLabel, heartLabel, levelLabel, newGame, load);
         } else {
             root.getChildren().addAll(model.getRect(), model.getBall(), scoreLabel, heartLabel, levelLabel);
@@ -190,4 +188,3 @@ private Button newGame=new Button("Start New Game");
     }
 
 }
-

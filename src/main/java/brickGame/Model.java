@@ -215,116 +215,6 @@ public class Model {
         }
     }
 
-//    private void setPhysicsToBall() {
-//        //v = ((time - hitTime) / 1000.000) + 1.000;
-//
-//        playball.updatePosition();
-//
-//        if (playball.gety() <= 0) {
-//            //vX = 1.000;
-//            resetColideFlags();
-//            playball.godownball();
-//            return;
-//        }
-//        if (playball.gety() >= sceneHeigt) {
-//            resetColideFlags();
-//            playball.goupball();
-//            if (!isGoldStauts) {
-//                //TODO gameover
-//                heart--;
-//                new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, this);
-//
-//                if (heart == 0) {
-//                    new Score().showGameOver(this);
-//                    engine.stop();
-//                }
-//
-//            }
-//            //return;
-//        }
-//
-//        if (playball.gety() >= paddle.getybreak() - ballRadius) {
-//            //System.out.println("Colide1");
-//            if (playball.getx() >= paddle.getxbreak() && playball.getx() <= paddle.getxbreak() + paddle.getbreakwidth()) {
-//                hitTime = time;
-//                resetColideFlags();
-//                colideToBreak = true;
-//                playball.goupball();
-//
-//                double relation = (playball.getx() - paddle.getcenterbreakX()) / (paddle.getbreakwidth() / 2);
-//
-//                if (Math.abs(relation) <= 0.3) {
-//                    //vX = 0;
-//                    playball.setvx(Math.abs(relation));
-//                } else if (Math.abs(relation) > 0.3 && Math.abs(relation) <= 0.7) {
-//                    playball.setvx((Math.abs(relation) * 1.5) + (level / 3.500));
-//                    //System.out.println("vX " + vX);
-//                } else {
-//                    playball.setvx((Math.abs(relation) * 2) + (level / 3.500));
-//                    //System.out.println("vX " + vX);
-//                }
-//
-//                if (playball.getx() - paddle.getcenterbreakX() > 0) {
-//                    colideToBreakAndMoveToRight = true;
-//                } else {
-//                    colideToBreakAndMoveToRight = false;
-//                }
-//                //System.out.println("Colide2");
-//            }
-//        }
-//
-//        if (playball.getx() >= sceneWidth) {
-//            resetColideFlags();
-//            //vX = 1.000;
-//            colideToRightWall = true;
-//        }
-//
-//        if (playball.getx() <= 0) {
-//            resetColideFlags();
-//            //vX = 1.000;
-//            colideToLeftWall = true;
-//        }
-//
-//        if (colideToBreak) {
-//            if (colideToBreakAndMoveToRight) {
-//                playball.gorightball();
-//            } else {
-//                playball.goleftball();
-//            }
-//        }
-//
-//        //Wall Colide
-//
-//        if (colideToRightWall) {
-//            playball.goleftball();
-//        }
-//
-//        if (colideToLeftWall) {
-//            playball.gorightball();
-//        }
-//
-//        //Block Colide
-//
-//        if (colideToRightBlock) {
-//            playball.gorightball();
-//        }
-//
-//        if (colideToLeftBlock) {
-//            playball.goleftball();
-//        }
-//
-//        if (colideToTopBlock) {
-//            playball.goupball();
-//        }
-//
-//        if (colideToBottomBlock) {
-//            playball.godownball();
-//        }
-//
-//
-//    }
-
-
     public void resetColideFlags() {
 
         colideToBreak = false;
@@ -399,6 +289,7 @@ public class Model {
     }
     public void restoreBlocks(LoadSave loadSave,ArrayList<Block> blocks){
         blocks.clear();
+        chocos.clear();
         for (BlockSerializable ser : loadSave.blocks) {
             int r = new Random().nextInt(200);
             blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
@@ -535,7 +426,7 @@ public class Model {
         return breakHeight;
     }
     public int getBreakWidth(){
-            return breakWidth;
+        return breakWidth;
     }
 
     public double getxBreak() {
