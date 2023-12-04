@@ -39,21 +39,13 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
 
     private boolean isGoldStauts      = false;
     private boolean isExistHeartBlock = false;
-
-    //    private Rectangle rect;
     private int       ballRadius = 10;
 
     private int destroyedBlockCount = 0;
-
-//    private double v = 1.000;
-
     private int  heart    = 3;
     private int  score    = 0;
     private long time     = 0;
-    private long hitTime  = 0;
     private long goldTime = 0;
-//    private long snowTime = 0;
-
     private GameEngine engine;
     public static String savePath    = "C:/save/save.mdds";
     public static String savePathDir =  "C:/save/";
@@ -61,33 +53,11 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
     private ArrayList<Bonus> snows = new ArrayList<Bonus>();
-    private Color[]          colors = new Color[]{
-            Color.MAGENTA,
-            Color.RED,
-            Color.GOLD,
-            Color.CORAL,
-            Color.AQUA,
-            Color.VIOLET,
-            Color.GREENYELLOW,
-            Color.ORANGE,
-            Color.PINK,
-            Color.SLATEGREY,
-            Color.YELLOW,
-            Color.TOMATO,
-            Color.TAN,
-    };
-    public Pane root;
-    private Label scoreLabel;
-    private Label            heartLabel;
-    private Label            levelLabel;
-
     private boolean loadFromSave = false;
     private boolean isPaused = false;
     private boolean isGameRunning = false;
 
     Stage primaryStage;
-    Button load    = null;
-    Button newGame = null;
     private Ball playball;
     private Break paddle;
     private Model model = new Model();

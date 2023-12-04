@@ -18,7 +18,6 @@ public class Model {
     private double yBreak = 640.0f ;
     private int breakWidth = 130;
     private int breakHeight    = 30;
-    private int sceneWidth = 500;
     private int sceneHeigt = 700;
     private int ballRadius = 10;
     private int level = 0;
@@ -27,10 +26,6 @@ public class Model {
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
     private ArrayList<Bonus> snows = new ArrayList<Bonus>();
-    private Ball playball;
-    private Break paddle;
-
-    private Main main;
     private Rectangle rect;
     private boolean isExistHeartBlock = false;
     private Color[]          colors = new Color[]{
@@ -65,7 +60,6 @@ public class Model {
     private int  heart    = 3;
     private int score;
     private Sound sound = new Sound();
-//    private View view = new View();
 
     public Ball initBall() {
         getBall();
@@ -78,58 +72,60 @@ public class Model {
         return new Break(xBreak,yBreak,breakWidth,breakHeight);
     }
     public void initBoard(ArrayList<Block> blocks,int level,boolean isExistHeartBlock) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < level + 1; j++) {
-                int r = new Random().nextInt(500);
-                if (r % 5 == 0) {
-                    continue;
+        if (level == 18){
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 10; j++) {
+                    int r = new Random().nextInt(500);
+                    if (r % 5 == 0) {
+                        continue;
+                    }
+                    int type;
+                    if (r % 10 == 1) {
+                        type = Block.BLOCK_CHOCO;
+                    } else if (r % 10 == 2) {
+                        if (!isExistHeartBlock) {
+                            type = Block.BLOCK_HEART;
+                            isExistHeartBlock = true;
+                        } else {
+                            type = Block.BLOCK_SNOW;
+                        }
+                    } else if (r % 10 == 3) {
+                        type = Block.BLOCK_STAR;
+                    } else {
+                        type = Block.BLOCK_CHOCO;
+                    }
+                    blocks.add(new Block(j, i, colors[r % (colors.length)], type));
+                    //System.out.println("colors " + r % (colors.length));
                 }
-                int type;
-                if (r % 10 == 1) {
-                    type = Block.BLOCK_CHOCO;
-                } else if (r % 10 == 2) {
-                    if (!isExistHeartBlock) {
-                        type = Block.BLOCK_HEART;
-                        isExistHeartBlock = true;
+            }
+        }
+        else {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < level + 1; j++) {
+                    int r = new Random().nextInt(500);
+                    if (r % 5 == 0) {
+                        continue;
+                    }
+                    int type;
+                    if (r % 10 == 1) {
+                        type = Block.BLOCK_CHOCO;
+                    } else if (r % 10 == 2) {
+                        if (!isExistHeartBlock) {
+                            type = Block.BLOCK_HEART;
+                            isExistHeartBlock = true;
+                        } else {
+                            type = Block.BLOCK_NORMAL;
+                        }
+                    } else if (r % 10 == 3) {
+                        type = Block.BLOCK_STAR;
+                    } else if (r % 10 == 4) {
+                        type = Block.BLOCK_SNOW;
                     } else {
                         type = Block.BLOCK_NORMAL;
                     }
-                } else if (r % 10 == 3) {
-                    type = Block.BLOCK_STAR;
-                } else if (r % 10 == 4) {
-                    type = Block.BLOCK_SNOW;
-                } else {
-                    type = Block.BLOCK_NORMAL;
+                    blocks.add(new Block(j, i, colors[r % (colors.length)], type));
+                    //System.out.println("colors " + r % (colors.length));
                 }
-                blocks.add(new Block(j, i, colors[r % (colors.length)], type));
-                //System.out.println("colors " + r % (colors.length));
-            }
-        }
-    }
-    public void initBonus(ArrayList<Block> blocks) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < level + 14; j++) {
-                int r = new Random().nextInt(500);
-                if (r % 5 == 0) {
-                    continue;
-                }
-                int type;
-                if (r % 10 == 1) {
-                    type = Block.BLOCK_CHOCO;
-                } else if (r % 10 == 2) {
-                    if (!isExistHeartBlock) {
-                        type = Block.BLOCK_HEART;
-                        isExistHeartBlock = true;
-                    } else {
-                        type = Block.BLOCK_SNOW;
-                    }
-                } else if (r % 10 == 3) {
-                    type = Block.BLOCK_STAR;
-                } else {
-                    type = Block.BLOCK_CHOCO;
-                }
-                blocks.add(new Block(j, i, colors[r % (colors.length)], type));
-                //System.out.println("colors " + r % (colors.length));
             }
         }
     }
@@ -330,36 +326,6 @@ public class Model {
     public void updateChocoPosition(Bonus choco,long time) {
         choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
     }
-//    public boolean shouldSkipSnow(Bonus snow) {
-//        return snow.y > sceneHeigt || snow.taken;
-//    }
-//    public boolean isSnowCaught(Bonus snow,Break paddle) {
-//        return snow.y >= paddle.getybreak() && snow.y <= paddle.getybreak() + paddle.getbreakwidth()
-//                && snow.x >= paddle.getxbreak() && snow.x <= paddle.getxbreak() + paddle.getbreakwidth();
-//    }
-//    public void updateSnowPosition(Bonus snow,long time) {
-//        snow.y += ((time - snow.timeCreated) / 1000.000) + 1.000;
-//    }
-//    private double targetSlowSpeed = 0.3; // Set your desired slow speed
-//    private double slowdownFactor = 0.98; // Adjust the factor to control the slowdown rate
-//    private final long SNOW_BONUS_DURATION = 10000; // Duration of snow bonus in milliseconds (10 seconds)
-//    private boolean isSnowBonusActive = false;
-//    public void PenaltyActive(Ball playball,long time,long snowBonusStartTime){
-//        playball.setvx(playball.getVx()*slowdownFactor);
-//        playball.setvy(playball.getVy()*slowdownFactor);
-//        // Ensure the speed doesn't go below the targetSlowSpeed
-//        playball.setvx(Math.max(playball.getVx(), targetSlowSpeed));
-//        playball.setvy(Math.max(playball.getVy(), targetSlowSpeed));
-//        ball.setFill(new ImagePattern(new Image("snowball.png")));
-//        long elapsedTime = time - snowBonusStartTime;
-//        if (elapsedTime >= SNOW_BONUS_DURATION) {
-//            // Snow bonus duration expired, reset the ball speed
-//            playball.setvx(1.0); // Reset to the original speed
-//            playball.setvy(1.0);
-//            isSnowBonusActive = false;
-//            ball.setFill(new ImagePattern(new Image("ball.png")));}
-//    }
-
     private static final double TARGET_SLOW_SPEED = 0.3;
     private static final double SLOWDOWN_FACTOR = 0.98;
     private static final long SNOW_BONUS_DURATION = 10000;
@@ -446,30 +412,6 @@ public class Model {
     }
     public Rectangle getRect() {return rect;}
     public boolean getisSnowBonusActive(){return isSnowBonusActive;}
-    public boolean isColideToBreak(){
-        return colideToBreak;
-    }
-    public boolean colideToBreakAndMoveToRight(){
-        return colideToBreakAndMoveToRight;
-    }
-    public boolean iscolideToRightWall(){
-        return colideToRightWall;
-    }
-    public boolean iscolideToLeftWall(){
-        return colideToLeftWall;
-    }
-    public boolean isColideToRightBlock(){
-        return colideToRightBlock;
-    }
-    public boolean isColideToLeftBlock(){
-        return colideToLeftBlock;
-    }
-    public boolean isColideToBottomBlock(){
-        return colideToBottomBlock;
-    }
-    public boolean isColideToTopBlock(){
-        return colideToTopBlock;
-    }
 
     //setter
     public void setBall(Circle ball){
