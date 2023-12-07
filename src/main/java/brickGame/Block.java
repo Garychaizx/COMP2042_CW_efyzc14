@@ -10,10 +10,6 @@ import java.io.Serializable;
 
 public class Block implements Serializable {
     private static Block block = new Block(-1, -1, Color.TRANSPARENT, 99);
-    public static int HIT_TOP_LEFT = 4;
-    public static int HIT_TOP_RIGHT = 5;
-    public static int HIT_BOTTOM_LEFT = 6;
-    public static int HIT_BOTTOM_RIGHT = 7;
 
     public int row;
     public int column;
