@@ -45,7 +45,50 @@ To compule the code and produce the application, follow the steps below:
       - Remove the background picture and add the gold colour background during gold status.
    - Current Status:
       - The gold coulour background is able to show but without the background picture.
+3. Issue with the delay of pedal movement
+   - Description:
+      - The pedal will have a slight delay while user start to control it.
+   - Steps Taken:
+      - refactored the code related to pedal and try to modify the code related to pedal
+   - Current Status:
+      - The issues persists but it does not affect much on the game.
 
 ### Features not implemented
 1. Feature 1[High Score Tracking]
-   - Explanation: The implementation of a high score tracking system is not yet implemented as the 
+   - Description : Show the highest score of the user everytime the game ended.
+   - Explaination: The implementation of a high score tracking system is not yet implemented as the highest score need to be saved in every game but when the user start a                        new game the highest score will also be deleted.
+2. Feature 2[Multiple Ball Ability]
+   - Description : Multiple Ball Ability should be activated when the ball hit certain special blocks.
+   - Explaination: The implementaion of multiple ball ability is not implemented as the difficulty of handling each ball. There is a problem when handling the collision
+                    detection between multiple balls and other game elements. Ensuring that each ball reacts appropriately to collisions without causing unexpected behavior                     can be intricate.
+3. Feature 3 [Customisable control]
+   - Description : Let the user to bind their keys to control the game.
+   - Explaination: The implementation of the customisable control setting is not implemented because of the challenges of input handling and conflict resolution. User might                     accidentally bound the same key to different actions, this will cause the game crash.
+  
+### New Java Classes
+1. Ball Class
+   - Ball class consists the codes related to ball, example: xball, yball, ball radius, speed of the ball and the directions of the ball.
+2. Break Class
+   - Break class onsists of the codes related to paddle, example : xbreak, ybreak, width of paddle, height of paddle and the center of paddle.
+3. Model Class
+    - Model class is the bridge between the control and the view. A model calss typically represents a game object or an entity that encapsulates both the data and the            logic associated with that object.
+4. View Class
+   - View class coordinate the appearance of the GUI. It decide where all the controls and displays go. It consists of the codes that setting up all the game object and          game state.
+5. Controller Class
+   - Controller class collects together all the controls in the GUI. Whenever the user activates a control, it calls a method in the model class to change its state              appropriately.
+6. Sound Class
+    - Sound class consists of the sounds for each specific situation and the methods to play all sounds.
+  
+### Modified Java Classes
+1. Block Class
+   - Changes: Modify the checkHitToBlock method to check the colllision of ball with edges of the blocks as the ball is not colliding with the ball at first.
+2. Bonus Class
+   - Changes: Added a penalty to the game.
+3. GameEngine Class
+   - Changes: Change thread to timeline as the score showing before changing to timeline is lagging everytime the ball hit the blocks.
+4. Main Class
+   - Changes: Refactored the class into model class, view class and controller class, this is to improve the understandability of the code and makes the code more                         maintainable.
+
+### Unexpected Problems
+1. The game was not able to run all the levels at first, it is solved by changing the thread in the code to timeline.
+2. The game is not runnable when using eclipse, by using intelliJ the code can run.
