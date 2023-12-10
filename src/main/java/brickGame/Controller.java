@@ -22,6 +22,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ * The {@code Controller} class serves as the main controller for the game.
+ * It handles user input, game logic, and interactions between the model,view and game engine.
+ * This class implements the EventHandler for KeyEvents and the GameEngine's OnAction interface.
+ *
+ * @author Chai Ze Xuan
+ */
 public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction  {
 
     private double xBreak = 0.0f;
@@ -65,6 +72,13 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private Sound sound = new Sound();
     private long savedTime;
 
+    /**
+     * The start method of the JavaFx application.
+     * It initializes the game components, sets up the primary stage and starts the game engine.
+     *
+     * @param primaryStage The primary stage for the JavaFX application
+     * @throws Exception If an exception occurs during initialization
+     */
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         model.setBall(view.createBall());
@@ -133,6 +147,11 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
 
     }
 
+    /**
+     * Handles the KeyEvents for controlling the game, including paddle movement, saving the game, toggling pause, and quitting the game.
+     *
+     * @param event The KeyEvent triggering the method.
+     */
     @Override
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
@@ -157,6 +176,12 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
                 break;
         }
     }
+
+    /**
+     * This method shows a confirmation window for quitting the game.
+     * Stops the game engine, displays a confirmation window and handle user responses.
+     * If the user chooses to quit, it exits the application;otherwise, resumes the game.
+     */
     private void showQuitConfirmation() {
         engine.stop();
         isGameRunning = false;
@@ -188,6 +213,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
+    /**
+     * This method pause and resume the game.
+     * Stops the game engine when the game is running, if the game is paused, resume the game.
+     */
     private void togglePause() {
         isPaused = !isPaused;
 
@@ -211,6 +240,14 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
+    /**
+     * Moves the paddle in the specified direction using a separate thread.
+     * The method creates a new thread to gradually move the paddle by incrementing or decrementing its x-coordinate.
+     * The movement is achieved by changing the x-coordinate of the paddle in small steps for a set duration.
+     * The thread pauses briefly between steps to control the speed of the movement.
+     *
+     * @param direction The direction in which the paddle should move. Use constants LEFT or RIGHT.
+     */
     private void move(final int direction) {
         new Thread(new Runnable() {
             @Override
@@ -240,8 +277,6 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
                 }
             }
         }).start();
-
-
     }
 
     private boolean goDownBall                  = true;
@@ -258,6 +293,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private double vX = 1.000;
     private double vY = 1.000;
 
+    /**
+     * handles the physics of ball
+     * handles the movement of the ball after collision with wall and pedal
+     */
     private void setPhysicsToBall() {
         playball.updatePosition();
         model.handleWallCollisions(playball,sceneWidth);
@@ -266,7 +305,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         model.handleBallMovement(playball);
     }
 
-
+    /**
+     * handles the deduction of heart when ball collide with bottom of the scene.
+     */
     private void handleGameOver() {
         if (!isGoldStauts && playball.gety() >= sceneHeigt) {
             heart--;
@@ -280,6 +321,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
+    /**
+     * This method will let the game proceeds to next level when the destroyed block count is same as the blocks the current level has.
+     */
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
             //TODO win level todo...
@@ -289,6 +333,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
+    /**
+     * Saves the current game state to a file.
+     */
     private void saveGame() {
         new Thread(new Runnable() {
             @Override
@@ -360,6 +407,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
 
     }
 
+    /**
+     * Loads a previously saved game state from a file.
+     */
     private void loadGame() {
 
         LoadSave loadSave = new LoadSave();
@@ -392,6 +442,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
 
     }
 
+    /**
+     * Handles the logic for the next game level, including resetting parameters and initializing the next level.
+     */
     private boolean nextLevelInProgress = false;
     private void nextLevel() {
         sound.playNextLevelSound();
@@ -413,6 +466,7 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
             }
         });
     }
+
     private void resetEngineAndBall() {
         engine.stop();
     }
@@ -420,6 +474,9 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         start(primaryStage);
     }
 
+    /**
+     * reset all the parameters in the game
+     */
     public void restartGame() {
         try {
             model.clearPenalty(playball);
@@ -433,6 +490,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
+    /**
+     * Implements the onUpdate method from the GameEngine's OnAction interface.
+     * Updates the game state, checks for collisions, and handles bonuses.
+     */
     @Override
     public void onUpdate() {
         Platform.runLater(() -> {
@@ -509,6 +570,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
+    /**
+     * Implements the onInit method from the GameEngine's OnAction interface.
+     * Handles initialization tasks when the game engine is started.
+     */
     @Override
     public void onInit() {
 
@@ -520,6 +585,10 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
     private boolean isSnowBonusActive = false;
     private long snowBonusStartTime = 0;
 
+    /**
+     * Implements the onPhysicsUpdate method from the GameEngine's OnAction interface.
+     * Handle physics updates, such as ball movement and collision detection.
+     */
     @Override
     public void onPhysicsUpdate() {
         Platform.runLater(() -> {
@@ -555,42 +624,12 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         }
     }
 
-
-    // Check for active snow bonus and update the ball speed
-    private void handleSnowBonusCollision(Bonus snow, Ball playball, Break paddle, long time) {
-        if (snow.y > sceneHeigt || snow.taken) {
-            return;
-        }
-
-        if (isSnowCaught(snow, paddle)) {
-            System.out.println("You Got a Penalty! (Ball will slow down for 10 seconds)");
-            snow.taken = true;
-            snow.snow.setVisible(false);
-            activateSnowBonus(); // Activate snow bonus on collision
-        }
-    }
-
-    private boolean isSnowCaught(Bonus snow, Break paddle) {
-        return snow.y >= paddle.getybreak() && snow.y <= paddle.getybreak() + paddle.getbreakwidth()
-                && snow.x >= paddle.getxbreak() && snow.x <= paddle.getxbreak() + paddle.getbreakwidth();
-    }
-
-    private void applySnowBonus(Ball playball, long time) {
-        playball.setvx(playball.getVx() * SLOWDOWN_FACTOR);
-        playball.setvy(playball.getVy() * SLOWDOWN_FACTOR);
-
-        playball.setvx(Math.max(playball.getVx(), TARGET_SLOW_SPEED));
-        playball.setvy(Math.max(playball.getVy(), TARGET_SLOW_SPEED));
-
-        model.getBall().setFill(new ImagePattern(new Image("snowball.png")));
-
-        long elapsedTime = time - snowBonusStartTime;
-        if (elapsedTime >= SNOW_BONUS_DURATION) {
-            // Snow bonus duration expired, reset the ball speed
-            resetSnowBonus(playball);
-        }
-    }
-
+    /**
+     * Resets the snow bonus, restoring the ball's speed to its original values and deactivating the snow bonus.
+     * Additionally, it sets the ball's fill to the default image pattern.
+     *
+     * @param playball The Ball object for which the snow bonus is being reset.
+     */
     private void resetSnowBonus(Ball playball) {
         playball.setvx(1.0); // Reset to the original speed
         playball.setvy(1.0);
@@ -598,21 +637,11 @@ public class Controller  implements EventHandler<KeyEvent>, GameEngine.OnAction 
         model.getBall().setFill(new ImagePattern(new Image("ball.png")));
     }
 
-    private void activateSnowBonus() {
-        isSnowBonusActive = true;
-        snowBonusStartTime = time;
-    }
-    private void updateSnowPosition(Bonus snow, long time) {
-        snow.y += ((time - snow.timeCreated) / 1000.0) + 1.0;
-    }
-
-    private void handleCaughtChoco(Bonus choco) {
-        System.out.println("You Got it and +3 score for you");
-        choco.taken = true;
-        choco.choco.setVisible(false);
-        score += 3;
-        new Score().show(choco.x, choco.y, 3, view);
-    }
+    /**
+     * Overrides the onTime method to update the current time variable in the controller.
+     *
+     * @param time The current time value provided by the game engine.
+     */
     @Override
     public void onTime(long time) {
         this.time = time;

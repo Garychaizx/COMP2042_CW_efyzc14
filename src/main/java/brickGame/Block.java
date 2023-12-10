@@ -8,6 +8,14 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.Serializable;
 
+/**
+ * The Block class represents a block in this game
+ * Each block has a specific type,colour and position in the game grid.
+ * Blocks can be destroyed by a ball. and some blocks have its own special effects.
+ * This class implements the {@code Serializable} interface for object serialization.
+ *
+ * @author Chai Ze Xuan
+ */
 public class Block implements Serializable {
     private static Block block = new Block(-1, -1, Color.TRANSPARENT, 99);
 
@@ -42,8 +50,14 @@ public class Block implements Serializable {
     public static int BLOCK_HEART = 102;
     public static int BLOCK_SNOW = 103;
 
-
-
+    /**
+     * Constructs a new Block object with the specified row,column,colour and type.
+     *
+     * @param row The row index of the blocks in the game grid.
+     * @param column The column index of the block in the game grid.
+     * @param color The color of the block.
+     * @param type The type of the block, determining its appearance and behaviour.
+     */
     public Block(int row, int column, Color color, int type) {
         this.row = row;
         this.column = column;
@@ -53,6 +67,9 @@ public class Block implements Serializable {
         draw();
     }
 
+    /**
+     * private method to initialise the block's graphical representation
+     */
     private void draw() {
         x = (column * width) + paddingH;
         y = (row * height) + paddingTop;
@@ -86,6 +103,14 @@ public class Block implements Serializable {
     }
 
 
+    /**
+     * Checks if the ball collides with the block and returns the type of collision.
+     *
+     * @param xBall The x-coordinate of the ball.
+     * @param yBall The y-coordinate of the ball.
+     * @param ballRadius The radius of the ball.
+     * @return The type of collision (HIT_RIGHT, HIT_BOTTOM, HIT_LEFT, HIT_TOP) or NO_HIT if no collision.
+     */
     public double checkHitToBlock(double xBall, double yBall, double ballRadius) {
 
         if (isDestroyed) {
@@ -114,22 +139,39 @@ public class Block implements Serializable {
 
         return NO_HIT;
     }
-    private double distance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
 
+    /**
+     * Gets the padding from the top of the game grid.
+     *
+     * @return The padding from the top of the game grid.
+     */
     public static int getPaddingTop() {
         return block.paddingTop;
     }
 
+    /**
+     * Gets the horizontal padding for blocks in the game grid.
+     *
+     * @return The horizontal padding for blocks.
+     */
     public static int getPaddingH() {
         return block.paddingH;
     }
 
+    /**
+     * Gets the height of the blocks.
+     *
+     * @return The height of the blocks.
+     */
     public static int getHeight() {
         return block.height;
     }
 
+    /**
+     * Gets the width of the blocks.
+     *
+     * @return The width of the blocks.
+     */
     public static int getWidth() {
         return block.width;
     }

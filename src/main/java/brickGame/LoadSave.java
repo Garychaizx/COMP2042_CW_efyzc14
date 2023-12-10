@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+/**
+ * The LoadSave class is responsible for reading and loading the saved game state from a file.
+ */
 public class LoadSave {
     public boolean          isExistHeartBlock;
     public boolean          isGoldStauts;
@@ -32,10 +35,10 @@ public class LoadSave {
     public long             goldTime;
     public double           vX;
     public ArrayList<BlockSerializable> blocks = new ArrayList<BlockSerializable>();
-//    public long snowTime;
-//    public boolean isSnowStauts;
 
-
+    /**
+     * Reads the saved game state from the specified file.
+     */
     public void read() {
 
 

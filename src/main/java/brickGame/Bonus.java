@@ -7,17 +7,53 @@ import javafx.scene.shape.Rectangle;
 import java.io.Serializable;
 import java.util.Random;
 
+/**
+ * The {@code Bonus} class represents bonus object in this game.
+ * This class contains bonus and penalty.
+ * This class provides information about bonus position, type and graphical representation.
+ * This class implements the {@code Serializable} interface for object serialization.
+ *
+ * @author Chai Ze Xuan
+ */
 public class Bonus implements Serializable {
+
+    /**
+     * Rectangle representing a chocolate bonus.
+     */
     public Rectangle choco;
+
+    /**
+     * Rectangle representing a snow bonus.
+     */
     public Rectangle snow;
 
+    /**
+     * The x-coordinate of the bonus.
+     */
     public double x;
-    public double y;
-    public long timeCreated;
-    public boolean taken = false;
-    public boolean isGoldBlock;
-    public boolean isSnowBlock;
 
+    /**
+     * The y-coordinate of the bonus.
+     */
+    public double y;
+
+    /**
+     * The time when the bonus was created.
+     */
+    public long timeCreated;
+
+    /**
+     * Indicates whether the bonus has collided with the pedal.
+     */
+    public boolean taken = false;
+
+    /**
+     * Constructs a new Bonus object with the specified row and column indices.
+     * The bonus is randomly generated and positioned based on the row and column.
+     *
+     * @param row The row index of the associated block in the game grid.
+     * @param column The column index of the associated block in the game grid.
+     */
     public Bonus(int row, int column) {
         x = (column * (Block.getWidth())) + Block.getPaddingH() + (Block.getWidth() / 2) - 15;
         y = (row * (Block.getHeight())) + Block.getPaddingTop() + (Block.getHeight() / 2) - 15;
@@ -25,6 +61,9 @@ public class Bonus implements Serializable {
         draw();
     }
 
+    /**
+     * method to initialise the bonus's and penalty's graphical representation.
+     */
     private void draw() {
         choco = new Rectangle();
         choco.setWidth(30);
@@ -46,6 +85,7 @@ public class Bonus implements Serializable {
             url = "bonus2.png";
         }
 
+        //set fill based on bonus tyoe and penalty
         choco.setFill(new ImagePattern(new Image(url)));
         snow.setFill(new ImagePattern(new Image(rrl)));
     }
