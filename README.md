@@ -5,14 +5,20 @@ JavaFx Lib:
 ### Compilation Instructions
 To compule the code and produce the application, follow the steps below:
 
-1. Clone the repository from [here](https://github.com/Garychaizx/COMP2042_CW_efyzc14.git)
-2. Download the JavaFx library from the link above,open the main file and add the library to the project by selecting
+1. Download the given zip file
+2. Unzip and extract the folder to your prefer folder.
+3. Open Intellij IDEA Community
+4. Make sure your IntelliJ IDE has the correct SDK cersion(Oracle OpenJDK version 21.0.1).If the version is not correct follow the step below
+
+       file -> Project Structure -> SDKs -> JDK home path -> browse-> Download JDK -> Download Oracle OpenJDK version 21.0.1
    
-   file>Project structure>Libraries
+6. Download the JavaFx library from the link above,open the main file and add the library to the project by selecting
+   
+       file -> Project structure -> Libraries
    
    and add the downloaded JavaFx library to the project.
-4. Click the Run button in main class
-5. Press start new game button to run the game in the program
+7. Click the Run button in main class
+8. Press start new game button to run the game in the program
 
 ### Implemented and Working Properly
 1. Feature 1:[Snow Blocks]
