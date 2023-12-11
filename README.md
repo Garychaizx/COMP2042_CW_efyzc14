@@ -3,9 +3,8 @@ JavaFx Lib:
 [javafxLib.zip](https://github.com/Garychaizx/COMP2042_CW_efyzc14/files/13543307/javafxLib.zip)
 
 ### Compilation Instructions
-To compule the code and produce the application, follow the steps below:
-
-1. Download the given zip file
+To compile the code and produce the application, follow the steps below:
+1. Download the source code zip file named "COMP2024ChaiZeXuan"
 2. Unzip and extract the folder to your prefer folder.
 3. Open Intellij IDEA Community
 4. Make sure your IntelliJ IDE has the correct SDK cersion(Oracle OpenJDK version 21.0.1).If the version is not correct follow the step below
