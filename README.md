@@ -4,7 +4,7 @@ JavaFx Lib:
 
 ### Compilation Instructions
 To compile the code and produce the application, follow the steps below:
-1. Download the source code zip file named "ChaiZeXuan_IntelliJ_19" from zip folder "COMP2024ChaiZeXuan".
+1. Download the source code zip folder named "ChaiZeXuan_IntelliJ_19" from zip folder "COMP2024ChaiZeXuan".
 2. Unzip and extract the folder to your prefer folder.
 3. Open Intellij IDEA Community
 4. Make sure your IntelliJ IDE has the correct SDK cersion(Oracle OpenJDK version 21.0.1).If the version is not correct follow the step below
